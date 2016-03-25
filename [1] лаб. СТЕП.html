@@ -1,0 +1,274 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<style>
+.properties {
+	border-collapse:collapse;
+}
+.properties td, .properties th {
+	border:1px solid black;
+}
+p {
+clear:both;
+}
+	</style>
+</head>
+<body>
+<h2>Создание приложения Windows Forms</h2>
+
+<p>Целью этого раздела является знакомство с технологией Windows Forms для построения простой программы на языке C#.
+Основное назначение Windows Forms - создание графического пользовательского интерфейса (GUI).</p>
+<p>Эта технология позволяет использовать следующие компоненты:
+<ul>
+	<li>диалоговые окна</li>
+	<li>текстовые поля - TextBox</li>
+	<li>надписи - Label</li>
+	<li>списки - ListBox, ComboBox</li>
+	<li>кнопки - Button</li>
+	<li>многие другие элементы управления</li>
+</ul>
+По существу, эти элементы управления являются просто классами из библиотеки .NET Framework.</p>
+
+<p>Для того, чтобы открыть панель Конструктор (Toolbox), нужно выбрать в меню View пункт Toolbox.
+images/toolbox.png
+Панель Конструктор(Toolbox) в Visual Studio позволяет перетаскивать мышью элементы управления в основную форму приложения. После этого IDE автоматически добавит исходный код для создания и инициализации экземпляра соответствующего класса.
+Размеры и расположение добавленных элементов управления также можно менять мышью.</p>
+
+<p>У каждого из элементов управления есть множество дополнительных свойств. Для того, чтобы работать с ними, нужно открыть панель свойств.
+Щелкните правой кнопкой по свободному месту на форме и выберите пункт Свойства (Properties).</p>
+
+<p>Измените свойства формы:
+<table class="properties">
+	<tr>
+		<th>Тип элемента</th>
+		<th>Наименование свойства</th>
+		<th>Значение</th>
+	</tr>
+	<tr>
+		<td rowspan="3">WindowsForm</td>
+		<td>(Name)</td>
+		<td>ProductCatalog</td>
+	</tr>
+	<tr>
+		<td>StartPosition</td>
+		<td>CenterScreen</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Справочник товаров</td>
+	</tr>
+</table>
+</p>
+
+<p>
+Эта форма будет справочником товаров. Слева на ней будет находиться список наименований товаров. Справа - свойства того товара, который сейчас выбран в списке.
+Основные операции со справочником это изменение, добавление и удаление товаров.
+</p>
+
+<p>
+Расположите на форме и настройте свойства остальных элементов управления.
+<img src="images/ProductCatalog.png"/>
+<table class="properties">
+	<tr>
+		<th>Тип элемента</th>
+		<th>Наименование свойства</th>
+		<th>Значение</th>
+	</tr>
+	<tr>
+		<td rowspan="2">ListBox</td>
+		<td>(Name)</td>
+		<td>listProducts</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>0</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">GroupBox</td>
+		<td>(Name)</td>
+		<td>productCard</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Карточка товара</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>1</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnSave</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Сохранить</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>5</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnDelete</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Удалить</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>6</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnRefresh</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Обновить</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>7</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnAdd</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Добавить</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>8</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">Label</td>
+		<td>(Name)</td>
+		<td>lblName</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Наименование</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">Label</td>
+		<td>(Name)</td>
+		<td>lblUnit</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Единица измерения</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">Label</td>
+		<td>(Name)</td>
+		<td>lblCost</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Цена за единицу</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">Label</td>
+		<td>(Name)</td>
+		<td>lblQuantity</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Количество</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">TextBox</td>
+		<td>(Name)</td>
+		<td>txtName</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>1</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">TextBox</td>
+		<td>(Name)</td>
+		<td>txtCost</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>3</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">TextBox</td>
+		<td>(Name)</td>
+		<td>txtQuantity</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>4</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">ComboBox</td>
+		<td>(Name)</td>
+		<td>cmbUnit</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>Items</td>
+		<td></br>штука</br>пара</td>
+	</tr>
+</table>
+</p>
+<p>
+Значения свойства (Name) будет использоваться для работы с элементом из кода программы. Поэтому оно должно быть максимально информативным. В рамках дисциплины рассмотрен один из подходов к именованию:
+Имя состоит из двух частей. Первая часть - сокращение от типа элемента управления. Вторая часть - его назначение. У кнопок это связанное действие. У текстовых полей и надписей это отображаемое свойство предмета.
+</p>
+<h3>Задание для самостоятельного выполнения</h3>
+<p>
+Создайте формы для справочников клиентов и поставщиков.
+</p>
+<p>
+О клиентах известно:
+<ul>
+	<li>Наименование - Name</li>
+	<li>Адрес - Address</li>
+	<li>ФИО начальника - Chief</li>
+	<li>Расчетный счет - CheckingAccount</li>
+	<li>Город - City</li>
+	<li>ИНН - INN</li>
+	<li>ОКОНХ - OKONH</li>
+	<li>ОКПО - OKPO</li>
+</ul>
+О поставщиках известно:
+<ul>
+	<li>Наименование - Name</li>
+	<li>Адрес - Address</li>
+	<li>Расчетный счет - CheckingAccount</li>
+	<li>Город - City</li>
+	<li>ИНН - INN</li>
+	<li>ОКОНХ - OKONH</li>
+	<li>ОКПО - OKPO</li>
+</ul>
+</p>
+</body>
+</html>
