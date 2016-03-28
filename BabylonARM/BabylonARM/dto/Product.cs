@@ -7,7 +7,7 @@ namespace BabylonARM.dto
 {
     public class Product
     {
-        public Product(String id, String unit, int quantity)
+        public Product(String id, Units unit, int quantity)
         {
             Id = id;
             Unit = unit;
@@ -15,7 +15,7 @@ namespace BabylonARM.dto
         }
 
         public String Id { get; private set; }
-        public String Unit { get; private set; }
+        public Units Unit { get; private set; }
         public int Cost { get; set; }
         public String Name { get; set; }
         public int Quantity { get; private set; }

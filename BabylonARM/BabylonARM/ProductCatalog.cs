@@ -35,13 +35,17 @@ namespace BabylonARM
         {
             InitializeComponent();
             dao = new ProductsDao("");
+            cmbUnit.DataSource = Units.UnitsList;
             List<Product> products = dao.getList();
             listProducts.DataSource = products;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (listProducts.SelectedItem != null)
+            {
+                Current = (Product) listProducts.SelectedItem;
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
