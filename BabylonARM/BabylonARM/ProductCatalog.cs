@@ -13,44 +13,30 @@ namespace BabylonARM
 {
     public partial class ProductCatalog : Form
     {
-        List<Product> products;
         private Product current;
-        private ProductsDao dao;
-
-        public Product Current {
-            set
-            {
-                txtCost.Text = value.Cost.ToString();
-                txtName.Text = value.Name;
-                txtQuantity.Text = value.Quantity.ToString();
-                cmbUnit.SelectedItem = value.Unit;
-            }
-            get
-            {
-                return current;
-            }
-        }
+        private ProductsDao productDao;
 
         public ProductCatalog()
         {
             InitializeComponent();
-            dao = new ProductsDao("");
-            cmbUnit.DataSource = Units.UnitsList;
-            List<Product> products = dao.getList();
-            listProducts.DataSource = products;
+            productDao = new ProductsDao("");
         }
 
         private void ProductCatalog_Load(object sender, EventArgs e)
         {
-            MessageBox.Show("Форма загрузилась");
+            listProducts.DataSource = productDao.getList();
         }
 
         private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            MessageBox.Show("Пользователь выбрал элемент списка");
             if (listProducts.SelectedItem != null)
             {
-                Current = (Product) listProducts.SelectedItem;
+                current = (Product) listProducts.SelectedItem;
+                txtName.Text = current.Name;
+                cmbUnit.SelectedItem = current.Unit;
+                txtCost.Text = current.Cost.ToString();
+                txtQuantity.Text = current.Quantity.ToString();
+                cmbProductGroup.Text = current.GroupId.ToString();
             }
         }
 
@@ -61,17 +47,23 @@ namespace BabylonARM
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Пользователь нажал кнопку \"Обновить\"");
+            listProducts.DataSource = productDao.getList();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Пользователь нажал кнопку \"Сохранить\"");
+            current.Name = txtName.Text;
+            current.Unit = cmbUnit.SelectedItem.ToString();
+            current.Cost = Decimal.Parse(txtCost.Text);
+            current.Quantity = Int32.Parse(txtQuantity.Text);
+            current.GroupId = Guid.Parse(cmbProductGroup.Text);
+            productDao.update(current);
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Пользователь нажал кнопку \"Удалить\"");
+            productDao.delete(current.Id);
         }
     }
 }

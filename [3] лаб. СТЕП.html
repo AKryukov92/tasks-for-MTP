@@ -1,0 +1,664 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<style>
+.properties {
+	border-collapse:collapse;
+}
+.properties td, .properties th {
+	border:1px solid black;
+}
+p {
+clear:both;
+}
+	</style>
+</head>
+<body>
+<h2>Связь с базой данных</h2>
+
+<p>Целью этой лабораторной является знакомство с технологией получения информации из базы данных.</p>
+
+<p>В системах со множеством пользователей, хранение данных поручают одному общему серверу БД. Работа с ним происходит путем отправления SQL запросов и обработки ответа.</p>
+
+<p>Основные операции работы с базой данных это:
+<ul>
+	<li>SELECT - для получения данных из таблицы</li>
+	<li>INSERT - для вставки данных в таблицу</li>
+	<li>UPDATE - для обновления данных в таблице</li>
+	<li>DELETE - для удаления данных из таблицы</li>
+</ul>
+</p>
+
+<p>Данные, полученные из базы, представляют собой множество записей с атрибутами. Чтобы пользоваться этими данными в программе, их нужно каждую запись представить как объект класса. Такие классы называются Data Transfer Object (DTO).</p>
+
+<p>Количество полей DTO обычно соответствует количеству полей таблицы в базе данных.</p>
+<p>Создайте в проекте папку "DTO" и в ней создайте новый класс <i>Product</i>.
+<p style="white-space:pre;font-family:monospace;">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace BabylonARM.dto
+{
+    public class Product
+    {
+        public String Id { get; set; }
+        public String Name { get; set; }
+        public String Unit { get; set; }
+        public String GroupId { get; set; }
+        public Decimal Cost { get; set; }
+        public int Quantity { get; set; }
+        public Decimal Weight { get; set; }
+    }
+}</p></p>
+
+<p>Классы dto отвечают только за хранение данных в памяти. За отправку запроса к базе данных и преобразование результата в набор объектов отвечает другой класс. Такие классы называются Data Access Object (DAO)</p>
+<p>DAO класс не содержит в себе только служебную информацию, которая нужна ему для работы. Обычно него определяют пять методов:
+<ul>
+	<li>Получить список объектов</li>
+	<li>Получить один объект по его коду</li>
+	<li>Добавить объект в таблицу</li>
+	<li>Обновить объект в таблице</li>
+	<li>Удалить объект в таблице по коду</li>
+</ul>
+В зависимости от потребностей, список методов может уменьшаться или расширяться. Возможно объект нельзя удалять - при этом не будет метода удаления. Возможно нужно получать не весь список, а отфильтрованный - при этом метод получения списка будет принимать дополнительные аргументы.</p>
+<p>Создайте в проекте папку "DAO" и в ней создайте новый класс <i>ProductsDao</i>.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+        //Получить список товаров
+        public List<Product> getList()
+        {
+            throw new NotImplementedException();
+        }
+        //Получить товар по коду
+        public Product getById(String id)
+        {
+            throw new NotImplementedException();
+        }
+        //Добавить товар в базу данных
+        public bool insert(Product p)
+        {
+            throw new NotImplementedException();
+        }
+        //Удалить товар из базы данных по его коду
+        public bool delete(String id)
+        {
+            throw new NotImplementedException();
+        }
+        //Обновить данные о товаре в базе данных
+        public bool update(Product p)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}</p></p>
+
+<p>Для связи с любой базой данных, программе нужен драйвер базы данных. Он берет на себя ответственность за технические ньюансы отправки и приема сообщений. Для каждой конкретной базы данных существует свой драйвер.</p>
+<p>В рамках лабораторной работы используется база данных PostgreSQL. Драйвер для нее называется Npgsql.</p>
+<p>Чтобы получить драйвер, нужно воспользоваться утилитой <i>nuget.exe</i>. Нужно запустить ее в консоли со следующими аргументами:
+<p style="white-space:pre;font-family:monospace;">nuget install npgsql -Version 2.2.7</p></p>
+<p>После окончания работы утилиты появится папка <i>Npgsql.2.2.7</i> в которой содержится библиотека с драйвером</p>
+<p>Теперь к проекту нужно добавить ссылку на эту библиотеку. Для этого нужно:
+<ul>
+	<li>Открыть Обозреватель Решений (Solution Explorer)</li>
+	<li>Щелкнуть правой кнопкой по узлу <i>Ссылки(References)</i></li>
+	<li>Выбрать пункт меню Добавить->Ссылку (Add->Reference)</li>
+	<li>Щелкнуть кнопку <i>Обзор...(Browse...)</i></li>
+	<li>Найти и выбрать файл Npgsql.2.2.7/lib/net40/Npgsql.dll</li>
+	<li>Щелкнуть кнопку <i>Добавить(Add)</i></li>
+</ul></p>
+
+<p>Теперь нужно указать, что класс ProductsDao будет использовать классы из подключенной библиотеки. Добавьте строчки, выделенные в листинге зеленым цветом.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+<span style="color:green">using Npgsql;
+using NpgsqlTypes;</span>
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+        //Получить список товаров
+        public List&lt;Product&gt; getList()
+        {
+            throw new NotImplementedException();
+        }
+        //Получить товар по коду
+        public Product getById(String id)
+        {
+            throw new NotImplementedException();
+        }
+        //Добавить товар в базу данных
+        public bool insert(Product p)
+        {
+            throw new NotImplementedException();
+        }
+        //Удалить товар из базы данных по его коду
+        public bool delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+        //Обновить данные о товаре в базе данных
+        public bool update(Product p)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}</p></p>
+
+<p>С самого начала подготовим SQL запросы, которые будем отправлять к базе данных. Запросы представляют собой простые строки. Поскольку запросы в целом будут меняться очень редко, они объявлены статическими. Т.е. экземпляр такой строки - общий для всех экземпляров dao класса.</p>
+<p>Запрос на получение данных ничем не отличается от обычного запроса.
+<p style="white-space:pre;font-family:monospace;">private static String GET_LIST_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";</p></p>
+<p>Запрос на получение одного товара содержит в себе изменяемую часть - идентификатор товара. Фрагмент, где нужно его вписывать, помечен токеном <i>:id</i>.
+<p style="white-space:pre;font-family:monospace;">private static String GET_SINGLE_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";</p></p>
+<p>Запрос на вставку товара в таблицу содержит несколько изменяемых частей. Каждую из них помечаем своим токеном.
+<p style="white-space:pre;font-family:monospace;">private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";</p></p>
+<p>Запрос на обновление тоже содержит несколько переменных. Каждую из них помечаем своим токеном. токен должно быть уникально в пределах запроса.
+<p style="white-space:pre;font-family:monospace;">private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";</p></p>
+
+<p>Запрос на удаление выглядит так:
+<p style="white-space:pre;font-family:monospace;">private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";</p></p>
+
+<p>После добавления этих запросов, в исходном коде класса ProductsDao появятся строчки, выделенные зеленым цветом.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Npgsql;
+using NpgsqlTypes;</span>
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+<span style="color:green">        private static String GET_LIST_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";
+
+        private static String GET_SINGLE_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";
+
+        private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";
+
+        private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+desc = :desc,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";
+
+        private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";</span>
+
+        //Получить список товаров
+        public List&lt;Product&gt; getList()
+        {
+            throw new NotImplementedException();
+        }
+        //Получить товар по коду
+        public Product getById(String id)
+        {
+            throw new NotImplementedException();
+        }
+        //Добавить товар в базу данных
+        public bool insert(Product p)
+        {
+            throw new NotImplementedException();
+        }
+        //Удалить товар из базы данных по его коду
+        public bool delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+        //Обновить данные о товаре в базе данных
+        public bool update(Product p)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}</p></p>
+
+<p>Общая технология работы с базой данных состоит из шагов:
+<ul>
+	<li>Создать подключение</li>
+	<li>Создать команду</li>
+	<li>Выполнить команду и получить запрос</li>
+	<li>Обработать результат запроса</li>
+</ul></p>
+
+<p>Подключение к базе данных реализуется классом NpgsqlConnection. Конструктор этого класса принимает <i>строку подключения (ConnectionString)</i>. Она содержит в себе адрес сервера, имя пользователя, пароль, а также некоторые <a href="http://www.npgsql.org/doc/connection-string-parameters/" target="_blank">другие данные</a>.
+<p style="white-space:pre;font-family:monospace;">NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");</p>
+</p>
+
+<p>Команда реализуется классом NpgSqlCommand. Конструктор этого класса принимает в себя строку с SQL запросом и экземпляр подключения.</p>
+
+<p>Первым делом реализуем команду на получение списка товаров.
+<p style="white-space:pre;font-family:monospace;">NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);</p></p>
+
+<p>Команду можно выполнить тремя способами:
+<ul>
+	<li>ExecuteNonQuery - Выполняет запрос и возвращает количество строк, которые были изменены. Подходит для INSERT, DELETE, UPDATE</li>
+	<li>ExecuteReader - Выполняет запрос и возвращает курсор, которым можно обработать результат. Чаще всего используется в запросе SELECT</li>
+	<li>ExecuteScalar - Выполняет запрос и возвращает значение из первой колонку в первой строчке результата запроса. Чаще всего используется в запросе SELECT с агрегирующими функциями.</li>
+</ul>
+</p>
+
+<p>Для получения списка товаров нужно использовать метод ExecuteReader. Полученный объект указывает на строчку в результате. 
+<p style="white-space:pre;font-family:monospace;">            List<Product> result = new List<Product>();//Коллекция для хранения результата
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                //Конструируем объект из данных в текущей строке
+                Product temp = new Product();
+                temp.Id = reader.GetGuid(0);//Получаем значение типа GUID из первой колонки
+                temp.Name = reader.GetString(1);//Получаем строковое значение из второй колонки
+                temp.GroupId = reader.GetGuid(2);
+                temp.Unit = reader.GetString(3);
+                if (!reader.IsDBNull(4))
+                {
+                    temp.Weight = reader.GetFloat(4);//Получаем дробное значение из пятой колонки
+                }
+                temp.Cost = reader.GetDecimal(5);
+                temp.Quantity = reader.GetInt32(6);//Получаем целое значение из седьмой колонки
+                result.Add(temp);//Добавляем сконструированный объект к результату
+            }
+            return result;
+</p></p>
+<p>После добавления этих запросов, в исходном коде класса ProductsDao появятся строчки, выделенные зеленым цветом.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Npgsql;
+using NpgsqlTypes;</span>
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+        private static String GET_LIST_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";
+
+        private static String GET_SINGLE_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";
+
+        private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";
+
+        private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+desc = :desc,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";
+
+        private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";
+
+        //Получить список товаров
+        public List&lt;Product&gt; getList()
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);
+            List<Product> result = new List<Product>();//Коллекция для хранения результата
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                //Конструируем объект из данных в текущей строке
+                Product temp = new Product();
+                temp.Id = reader.GetGuid(0);//Получаем значение типа GUID из первой колонки
+                temp.Name = reader.GetString(1);//Получаем строковое значение из второй колонки
+                temp.GroupId = reader.GetGuid(2);
+                temp.Unit = reader.GetString(3);
+                if (!reader.IsDBNull(4))
+                {
+                    temp.Weight = reader.GetFloat(4);//Получаем дробное значение из пятой колонки
+                }
+                temp.Cost = reader.GetDecimal(5);
+                temp.Quantity = reader.GetInt32(6);//Получаем целое значение из седьмой колонки
+                result.Add(temp);//Добавляем сконструированный объект к результату
+            }
+            connection.Close();
+            return result;</span><span style="color:red;text-decoration:line-through;">throw new NotImplementedException();</span>
+        }
+        //Получить товар по коду
+        public Product getById(String id)
+        {
+            throw new NotImplementedException();
+        }
+        //Добавить товар в базу данных
+        public bool insert(Product p)
+        {
+            throw new NotImplementedException();
+        }
+        //Удалить товар из базы данных по его коду
+        public bool delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+        //Обновить данные о товаре в базе данных
+        public bool update(Product p)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}</p></p>
+
+<p>Теперь реализуем вставку данных в таблицу. Этот запрос содержит в себе изменяемые части - параметры. Каждый параметр содержит в себе токен, значение для замены и тип поля в базе данных.
+<p style="white-space:pre;font-family:monospace;">        public bool insert(Product p)
+        {
+		    <span style="color:green">            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(INSERT_CMD, connection);
+            cmd.Parameters.Add(
+                //Используется конструктор с одновременной инициализацией поля Value
+                new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = p.Id }
+                );
+            cmd.Parameters.Add(new NpgsqlParameter(":desc", NpgsqlDbType.Text) { Value = p.Name });
+            cmd.Parameters.Add(new NpgsqlParameter(":groupid", NpgsqlDbType.Uuid) { Value = p.GroupId });
+            cmd.Parameters.Add(new NpgsqlParameter(":unitid", NpgsqlDbType.Text) { Value = p.Unit });
+            cmd.Parameters.Add(new NpgsqlParameter(":weight", NpgsqlDbType.Real) { Value = p.Weight });
+            cmd.Parameters.Add(new NpgsqlParameter(":cost", NpgsqlDbType.Money) { Value = p.Cost });
+            cmd.Parameters.Add(new NpgsqlParameter(":quantity", NpgsqlDbType.Integer) { Value = p.Quantity });
+            bool result = cmd.ExecuteNonQuery() == 1;//Проверяется количество измененных строк
+            connection.Close();//Закрывается подключение
+            return result;
+            //Если вставилось 0 строк, значит запрос выполнился некорректно</span><span style="color:red;text-decoration:line-through;">throw new NotImplementedException();</span>
+        }</p></p>
+		
+<p>В итоге исходный код класса должен быть таким.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Npgsql;
+using NpgsqlTypes;
+
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+        private static String GET_LIST_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";
+
+        private static String GET_SINGLE_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";
+
+        private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";
+
+        private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+desc = :desc,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";
+
+        private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";
+
+        private String connectionString;
+        public List<Product> getList()
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);
+            List<Product> result = new List<Product>();//Коллекция для хранения результата
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                //Конструируем объект из данных в текущей строке
+                Product temp = new Product();
+                temp.Id = reader.GetGuid(0);//Получаем значение типа GUID из первой колонки
+                temp.Name = reader.GetString(1);//Получаем строковое значение из второй колонки
+                temp.GroupId = reader.GetGuid(2);
+                temp.Unit = reader.GetString(3);
+                if (!reader.IsDBNull(4))
+                {
+                    temp.Weight = reader.GetFloat(4);//Получаем дробное значение из пятой колонки
+                }
+                temp.Cost = reader.GetDecimal(5);
+                temp.Quantity = reader.GetInt32(6);//Получаем целое значение из седьмой колонки
+                result.Add(temp);//Добавляем сконструированный объект к результату
+            }
+            connection.Close();
+            return result;
+        }
+
+        public Product getById(String id)
+        {
+            return null;
+        }
+
+        public bool insert(Product p)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(INSERT_CMD, connection);
+            cmd.Parameters.Add(
+                //Используется конструктор с одновременной инициализацией поля Value
+                new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = p.Id }
+                );
+            cmd.Parameters.Add(new NpgsqlParameter(":desc", NpgsqlDbType.Text) { Value = p.Name });
+            cmd.Parameters.Add(new NpgsqlParameter(":groupid", NpgsqlDbType.Uuid) { Value = p.GroupId });
+            cmd.Parameters.Add(new NpgsqlParameter(":unitid", NpgsqlDbType.Text) { Value = p.Unit });
+            cmd.Parameters.Add(new NpgsqlParameter(":weight", NpgsqlDbType.Real) { Value = p.Weight });
+            cmd.Parameters.Add(new NpgsqlParameter(":cost", NpgsqlDbType.Money) { Value = p.Cost });
+            cmd.Parameters.Add(new NpgsqlParameter(":quantity", NpgsqlDbType.Integer) { Value = p.Quantity });
+            bool result = cmd.ExecuteNonQuery() == 1;//Проверяется количество измененных строк
+            connection.Close();//Закрывается подключение
+            return result;
+            //Если вставилось 0 строк, значит запрос выполнился некорректно
+        }
+
+        public bool delete(Guid id)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(DELETE_CMD, connection);
+            cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = id });
+            bool result = cmd.ExecuteNonQuery() == 1;
+            connection.Close();
+            return result;
+        }
+
+        public bool update(Product p)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(UPDATE_CMD, connection);
+            cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = p.Id });
+            cmd.Parameters.Add(new NpgsqlParameter(":desc", NpgsqlDbType.Text) { Value = p.Name });
+            cmd.Parameters.Add(new NpgsqlParameter(":groupid", NpgsqlDbType.Uuid) { Value = p.GroupId });
+            cmd.Parameters.Add(new NpgsqlParameter(":unitid", NpgsqlDbType.Text) { Value = p.Unit });
+            cmd.Parameters.Add(new NpgsqlParameter(":weight", NpgsqlDbType.Real) { Value = p.Weight });
+            cmd.Parameters.Add(new NpgsqlParameter(":cost", NpgsqlDbType.Money) { Value = p.Cost });
+            cmd.Parameters.Add(new NpgsqlParameter(":quantity", NpgsqlDbType.Integer) { Value = p.Quantity });
+            bool result = cmd.ExecuteNonQuery() == 1;
+            connection.Close();
+            return result;
+        }
+    }
+}</p></p>
+
+<p>Теперь нужно связать этот класс с событиями на форме.
+Нужно внести следующие изменения:
+<ul>
+<li>В классе справочника нужно поместить ссылку на dao товаров.</li>
+<li>В конструкторе формы нужно инициализировать dao товаров.</li>
+<li>При загрузке формы (ProductCatalog_Load) нужно вызвать метод getList и заполнить список товаров</li>
+<li>При нажатии на кнопку "обновить" нужно вызвать метод getList и заполнить список товаров</li>
+<li>При выборе элемента списка (listProducts_SelectedIndexChanged) нужно заполнить поля формы данными</li>
+<li>При нажатии на кнопку "Удалить" нужно вызвать метод dao.delete и указать идентификатор выбранного объекта</li>
+<li>При нажатии на кнопку "Сохранить", нужно переписать данные из полей на форме в поля выбранного объекта</li>
+</ul><p style="white-space:pre;font-family:monospace;">using BabylonARM.dao;
+using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace BabylonARM
+{
+    public partial class ProductCatalog : Form
+    {
+        private Product current;//Объявление "текущего товара"
+        private ProductsDao productDao;//Объявление DAO
+
+        public ProductCatalog()
+        {
+            InitializeComponent();
+            productDao = new ProductsDao("");//Инициализация DAO
+        }
+
+        private void ProductCatalog_Load(object sender, EventArgs e)
+        {
+            listProducts.DataSource = productDao.getList();//Получение списка товаров
+        }
+
+        private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listProducts.SelectedItem != null)
+            {
+                current = (Product) listProducts.SelectedItem;//"Текущий товар" указывает на выбранный элемент
+				//Заполняем поля на форме
+                txtName.Text = current.Name;
+                cmbUnit.SelectedItem = current.Unit;
+                txtCost.Text = current.Cost.ToString();
+                txtQuantity.Text = current.Quantity.ToString();
+                cmbProductGroup.Text = current.GroupId.ToString();
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь нажал кнопку \"Добавить\"");
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            listProducts.DataSource = productDao.getList();//Получение списка товаров
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+			//Сбор данных из полей формы
+            current.Name = txtName.Text;
+            current.Unit = cmbUnit.SelectedItem.ToString();
+            current.Cost = Decimal.Parse(txtCost.Text);
+            current.Quantity = Int32.Parse(txtQuantity.Text);
+            current.GroupId = Guid.Parse(cmbProductGroup.Text);
+            productDao.update(current);//Обновление товара
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            productDao.delete(current.Id);//Удаление текущего товара
+        }
+    }
+}
+</p></p>
+<h3>Задание для самостоятельного выполнения</h3>
+<p>Создайте DTO и DAO классы для справочников групп товаров, сотрудников и клиентов.</p>
+</body>
+</html>
