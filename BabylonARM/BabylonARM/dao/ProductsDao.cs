@@ -43,6 +43,7 @@ namespace BabylonARM.dao
 
         public bool insert(Product p)
         {
+            String unitdbName = p.Unit.ToString();
             return true;
         }
 

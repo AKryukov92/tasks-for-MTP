@@ -89,10 +89,14 @@ COMMENT ON COLUMN Orders.Finished IS 'выполнено';
 
 CREATE TABLE Clients (
 	ClientId uuid PRIMARY KEY,
+	CheckingAccount varchar,
+	INN varchar,
 	Name varchar
 );
 COMMENT ON TABLE Clients IS 'Клиенты';
 COMMENT ON COLUMN Clients.ClientId IS 'Код - Уникальный идентификатор клиента';
+COMMENT ON COLUMN Clients.CheckingAccount IS 'Расчетный счет';
+COMMENT ON COLUMN Clients.INN IS 'ИНН - Индивидуальный налоговый номер';
 COMMENT ON COLUMN Clients.Name IS 'Название';
 
 CREATE TABLE HireTypes (

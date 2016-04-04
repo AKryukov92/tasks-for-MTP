@@ -40,9 +40,11 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.productCard = new System.Windows.Forms.GroupBox();
+            this.gboxProductCard = new System.Windows.Forms.GroupBox();
+            this.lblProductGroup = new System.Windows.Forms.Label();
+            this.cmbProductGroup = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.productCard.SuspendLayout();
+            this.gboxProductCard.SuspendLayout();
             this.SuspendLayout();
             // 
             // listProducts
@@ -50,9 +52,9 @@
             this.listProducts.FormattingEnabled = true;
             this.listProducts.Location = new System.Drawing.Point(12, 12);
             this.listProducts.Name = "listProducts";
-            this.listProducts.Size = new System.Drawing.Size(156, 134);
+            this.listProducts.Size = new System.Drawing.Size(156, 147);
             this.listProducts.TabIndex = 0;
-            this.listProducts.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.listProducts.SelectedIndexChanged += new System.EventHandler(this.listProducts_SelectedIndexChanged);
             // 
             // lblName
             // 
@@ -88,8 +90,15 @@
             this.cmbUnit.FormattingEnabled = true;
             this.cmbUnit.Items.AddRange(new object[] {
             "",
-            "штука",
-            "пара"});
+            "UNIT",
+            "PACKING",
+            "PACK",
+            "BOTTLE_05",
+            "BOTTLE_033",
+            "BOX",
+            "CRATE",
+            "TIN_POT",
+            "GLASS_POT"});
             this.cmbUnit.Location = new System.Drawing.Point(131, 45);
             this.cmbUnit.Name = "cmbUnit";
             this.cmbUnit.Size = new System.Drawing.Size(100, 21);
@@ -131,7 +140,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(156, 140);
+            this.btnDelete.Location = new System.Drawing.Point(156, 151);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 6;
@@ -141,7 +150,7 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(93, 152);
+            this.btnAdd.Location = new System.Drawing.Point(93, 163);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(75, 23);
             this.btnAdd.TabIndex = 8;
@@ -152,7 +161,7 @@
             // btnSave
             // 
             this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(75, 140);
+            this.btnSave.Location = new System.Drawing.Point(75, 151);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 5;
@@ -160,28 +169,47 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // productCard
+            // gboxProductCard
             // 
-            this.productCard.Controls.Add(this.lblName);
-            this.productCard.Controls.Add(this.btnSave);
-            this.productCard.Controls.Add(this.txtName);
-            this.productCard.Controls.Add(this.txtCost);
-            this.productCard.Controls.Add(this.btnDelete);
-            this.productCard.Controls.Add(this.cmbUnit);
-            this.productCard.Controls.Add(this.lblQuantity);
-            this.productCard.Controls.Add(this.txtQuantity);
-            this.productCard.Controls.Add(this.lblUnit);
-            this.productCard.Controls.Add(this.lblCost);
-            this.productCard.Location = new System.Drawing.Point(174, 12);
-            this.productCard.Name = "productCard";
-            this.productCard.Size = new System.Drawing.Size(237, 171);
-            this.productCard.TabIndex = 1;
-            this.productCard.TabStop = false;
-            this.productCard.Text = "Карточка товара";
+            this.gboxProductCard.Controls.Add(this.lblProductGroup);
+            this.gboxProductCard.Controls.Add(this.cmbProductGroup);
+            this.gboxProductCard.Controls.Add(this.lblName);
+            this.gboxProductCard.Controls.Add(this.btnSave);
+            this.gboxProductCard.Controls.Add(this.txtName);
+            this.gboxProductCard.Controls.Add(this.txtCost);
+            this.gboxProductCard.Controls.Add(this.btnDelete);
+            this.gboxProductCard.Controls.Add(this.cmbUnit);
+            this.gboxProductCard.Controls.Add(this.lblQuantity);
+            this.gboxProductCard.Controls.Add(this.txtQuantity);
+            this.gboxProductCard.Controls.Add(this.lblUnit);
+            this.gboxProductCard.Controls.Add(this.lblCost);
+            this.gboxProductCard.Location = new System.Drawing.Point(174, 12);
+            this.gboxProductCard.Name = "gboxProductCard";
+            this.gboxProductCard.Size = new System.Drawing.Size(237, 181);
+            this.gboxProductCard.TabIndex = 1;
+            this.gboxProductCard.TabStop = false;
+            this.gboxProductCard.Text = "Карточка товара";
+            // 
+            // lblProductGroup
+            // 
+            this.lblProductGroup.AutoSize = true;
+            this.lblProductGroup.Location = new System.Drawing.Point(6, 127);
+            this.lblProductGroup.Name = "lblProductGroup";
+            this.lblProductGroup.Size = new System.Drawing.Size(80, 13);
+            this.lblProductGroup.TabIndex = 11;
+            this.lblProductGroup.Text = "Группа товара";
+            // 
+            // cmbProductGroup
+            // 
+            this.cmbProductGroup.FormattingEnabled = true;
+            this.cmbProductGroup.Location = new System.Drawing.Point(131, 124);
+            this.cmbProductGroup.Name = "cmbProductGroup";
+            this.cmbProductGroup.Size = new System.Drawing.Size(100, 21);
+            this.cmbProductGroup.TabIndex = 10;
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(12, 152);
+            this.btnRefresh.Location = new System.Drawing.Point(12, 163);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(75, 23);
             this.btnRefresh.TabIndex = 7;
@@ -193,16 +221,17 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 188);
+            this.ClientSize = new System.Drawing.Size(414, 197);
             this.Controls.Add(this.btnRefresh);
-            this.Controls.Add(this.productCard);
+            this.Controls.Add(this.gboxProductCard);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.listProducts);
             this.Name = "ProductCatalog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Справочник товаров";
-            this.productCard.ResumeLayout(false);
-            this.productCard.PerformLayout();
+            this.Load += new System.EventHandler(this.ProductCatalog_Load);
+            this.gboxProductCard.ResumeLayout(false);
+            this.gboxProductCard.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -221,8 +250,10 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.GroupBox productCard;
+        private System.Windows.Forms.GroupBox gboxProductCard;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Label lblProductGroup;
+        private System.Windows.Forms.ComboBox cmbProductGroup;
     }
 }
 

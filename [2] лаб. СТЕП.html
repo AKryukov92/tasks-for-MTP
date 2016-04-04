@@ -1,0 +1,359 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<style>
+.properties {
+	border-collapse:collapse;
+}
+.properties td, .properties th {
+	border:1px solid black;
+}
+p {
+clear:both;
+}
+	</style>
+</head>
+<body>
+<h2>Обработка событий формы</h2>
+
+<p>Целью этой лабораторной является продолжение знакомства с событиями Windows Forms.</p>
+
+<p>С формой и с каждым элементом управления может случиться множество событий. Событие в Windows Forms происходит когда пользователь совершил какое-нибудь действие. Например нажал кнопку, выбрал элемент в списке и т.п. Полный список событий можно посмотреть в справке microsoft:
+<ul>
+<li><a href="https://msdn.microsoft.com/ru-ru/library/system.windows.forms.form_events(v=vs.110).aspx" target="_blank">События формы</a></li>
+<li><a href="https://msdn.microsoft.com/ru-ru/library/system.windows.forms.control_events(v=vs.110).aspx" target="_blank">События элементов управления</a></li>
+</ul>
+Для того, чтобы среагировать на событие нужно:
+<ul>
+<li>У формы описать метод-обработчик события</li>
+<li>В свойствах элемента управления назначить событию метод-обработчик.</li>
+</ul>
+</p>
+
+<p>Откройте форму и перейдите к ее исходному коду клавишей F7. Добавьте строчки, выделенные в листинге зеленым цветом.
+<p style="white-space:pre;font-family:monospace;">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace BabylonARM
+{
+    public partial class ProductCatalog : Form
+    {
+        public ProductCatalog()
+        {
+            InitializeComponent();
+        }
+
+<span style="color:green">        //Обработчик загрузки формы
+        private void ProductCatalog_Load(object sender, EventArgs e)
+        {
+            MessageBox.Show("Форма загрузилась");
+        }
+
+        //Обработчик выбора элемента в списке
+        private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+		    //Простое сообщение пользователю
+            MessageBox.Show("Пользователь выбрал элемент списка");
+        }
+		
+        //Обработчик нажатия кнопки "Добавить"
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь нажал кнопку \"Добавить\"");
+        }
+
+        //Обработчик нажатия кнопки "Обновить"
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь нажал кнопку \"Обновить\"");
+        }
+
+        //Обработчик нажатия кнопки "Сохранить"
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь нажал кнопку \"Сохранить\"");
+        }
+
+        //Обработчик нажатия кнопки "Удалить"
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь нажал кнопку \"Удалить\"");
+        }</span>
+    }
+}
+</p>
+</p>
+
+<p>Теперь нужно назначить каждому событию элементов управления свой метод-обработчик. Для этого:
+<ul>
+	<li>Откройте форму.</li>
+	<li>Откройте панель свойств формы.</li>
+	<li>Щелкните кнопку с изображением молнии (Events).</li>
+	<li>Найдите у нее свойство Load и назначьте ему значение "ProductCatalog_Load" из выпадающего списка.</li>
+</ul>
+По аналогии назначьте обработчики остальным элементам управления.
+<table class="properties">
+	<tr>
+		<th>(Name) элемента</th>
+		<th>Событие</th>
+		<th>Название метода-обработчика</th>
+	</tr>
+	<tr>
+		<td>ProductCatalog</td>
+		<td>Load</td>
+		<td>ProductCatalog_Load</td>
+	</tr>
+	<tr>
+		<td>listProducts</td>
+		<td>SelectedIndexChanged</td>
+		<td>listProducts_SelectedIndexChanged</td>
+	</tr>
+	<tr>
+		<td>btnAdd</td>
+		<td>Click</td>
+		<td>btnAdd_Click</td>
+	</tr>
+	<tr>
+		<td>btnRefresh</td>
+		<td>Click</td>
+		<td>btnRefresh_Click</td>
+	</tr>
+	<tr>
+		<td>btnSave</td>
+		<td>Click</td>
+		<td>btnSave_Click</td>
+	</tr>
+	<tr>
+		<td>btnDelete</td>
+		<td>Click</td>
+		<td>btnDelete_Click</td>
+	</tr>
+</table>
+</p>
+
+<p>Запустите программу. Проверьте срабатывание каждого из событий.</p>
+
+<p>Для быстрого добавления метода Click кнопки, можно дважды щелкнуть по ней во время конструирования.</p>
+
+<p>Создайте новую форму и назовите ее MainMenu. Расположите на форме и настройте свойства элементов управления.</p>
+<img src="images/MainMenu.png"/>
+<p>
+<table class="properties">
+	<tr>
+		<th>Тип элемента</th>
+		<th>Наименование свойства</th>
+		<th>Значение</th>
+	</tr>
+	<tr>
+		<td rowspan="3">Form</td>
+		<td>(Name)</td>
+		<td>MainMenu</td>
+	</tr>
+	<tr>
+		<td>StartPosition</td>
+		<td>CenterScreen</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Меню</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">GroupBox</td>
+		<td>(Name)</td>
+		<td>gboxManuCatalogs</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Справочники</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>0</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnProducts</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Товары</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>1</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnEmployees</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Сотрудники</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>2</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="3">Button</td>
+		<td>(Name)</td>
+		<td>btnProductGroups</td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Группы товаров</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>3</td>
+	</tr>
+</table>
+</p>
+
+У каждой кнопки назначьте обработчик события Click.
+<p>Исходный код формы должен выглядеть примерно так.
+<p style="white-space:pre;font-family:monospace;">using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace BabylonARM
+{
+    public partial class MainMenu : Form
+    {
+        public MainMenu()
+        {
+            InitializeComponent();
+        }
+
+        private void btnProducts_Click(object sender, EventArgs e)
+        {
+            //Создание нового экземпляра формы
+            ProductCatalog productsCatalog = new ProductCatalog();
+            //Отображение созданной формы на экране
+            productsCatalog.Show();
+        }
+
+        private void btnEmployees_Click(object sender, EventArgs e)
+        {
+
+            MessageBox.Show("Справочник сотрудников нужно сделать самостоятельно.");
+        }
+
+        private void btnProductGroups_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Справочник групп товаров нужно сделать самостоятельно.");
+        }
+    }
+}
+</p>
+</p>
+
+<p>Теперь нужно сделать так, чтобы меню появлялось при запуске программы. Для этого нужно открыть файл Program.cs и изменить в нем одну команду.
+<p style="white-space:pre;font-family:monospace;">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace BabylonARM
+{
+    static class Program
+    {
+        /// &lt;summary&gt;
+        /// The main entry point for the application.
+        /// &lt;/summary&gt;
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new <span style="color:red;text-decoration:line-through;">ProductCatalog</span><span style="color:green">MainMenu</span>());
+        }
+    }
+}
+</p>
+</p>
+
+<p>Проверьте сценарии:
+</p>
+<p>
+Сценарий 1
+<ul>
+	<li>Запустить программу</li>
+	<li>Должно открыться меню</li>
+	<li>Щелкнуть кнопку "Товары"</li>
+	<li>Должен открыться справочник товаров.</li>
+	<li>Щелкните кнопку "Обновить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Обновить"</i></li>
+	<li>Щелкните кнопку "Сохранить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Сохранить"</i></li>
+	<li>Щелкните кнопку "Удалить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Удалить"</i></li>
+	<li>Щелкните кнопку "Добавить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Добавить"</i></li>
+</ul>
+Сценарий 2
+<ul>
+	<li>Запустить программу</li>
+	<li>Должно открыться меню</li>
+	<li>Щелкнуть кнопку "Сотрудники"</li>
+	<li>Должно появиться сообщение <i>Справочник сотрудников нужно сделать самостоятельно.</i></li>
+	<li>Щелкнуть кнопку "Справочник групп"</li>
+	<li>Должно появитсья сообщение <i>Справочник групп товаров нужно сделать самостоятельно.</i></li>
+</ul>
+</p>
+
+<h3>Задание для самостоятельного выполнения</h3>
+<p>Создайте обработчики событий для справочников групп товаров, сотрудников и клиентов.</p>
+<p>Добейтесь, чтобы следующие сценарии были успешны:</p>
+<p>
+Сценарий 3
+<ul>
+	<li>Запустить программу</li>
+	<li>Должно открыться меню</li>
+	<li>Щелкнуть кнопку "Сотрудники"</li>
+	<li>Должен открыться справочник сотрудников.</li>
+	<li>Щелкните кнопку "Обновить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Обновить"</i></li>
+	<li>Щелкните кнопку "Сохранить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Сохранить"</i></li>
+	<li>Щелкните кнопку "Удалить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Удалить"</i></li>
+	<li>Щелкните кнопку "Добавить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Добавить"</i></li>
+</ul>
+Сценарий 4
+<ul>
+	<li>Запустить программу</li>
+	<li>Должно открыться меню</li>
+	<li>Щелкнуть кнопку "Группы товаров"</li>
+	<li>Должен открыться справочник групп товаров.</li>
+	<li>Щелкните кнопку "Обновить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Обновить"</i></li>
+	<li>Щелкните кнопку "Сохранить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Сохранить"</i></li>
+	<li>Щелкните кнопку "Удалить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Удалить"</i></li>
+	<li>Щелкните кнопку "Добавить"</li>
+	<li>Должно появиться сообщение <i>Пользователь нажал кнопку "Добавить"</i></li>
+</ul></p>
+<p>Сценарий 2 при этом будет не актуален.</p>
+</body>
+</html>

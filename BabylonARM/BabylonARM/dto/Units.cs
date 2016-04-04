@@ -9,9 +9,12 @@ namespace BabylonARM.dto
     public struct Units
     {
         private String description;
-        private Units(String description)
+        public String DbName { private set; get; }
+
+        private Units(String description, String dbName)
         {
             this.description = description;
+            this.DbName = dbName;
         }
 
         public override string ToString()
@@ -19,15 +22,17 @@ namespace BabylonARM.dto
             return description;
         }
 
-        public static Units BOTTLE_033 { get { return new Units("бутылка 0.33 л."); } }
-        public static Units BOTTLE_05 { get { return new Units("бутылка 0.5 л."); } }
-        public static Units BOX { get { return new Units("коробка"); } }
-        public static Units CRATE { get { return new Units("ящик"); } }
-        public static Units GLASS_POT { get { return new Units("банка, стекло"); } }
-        public static Units PACK { get { return new Units("пачка"); } }
-        public static Units PACKING { get { return new Units("упаковка"); } }
-        public static Units TIN_POT { get { return new Units("банка, жесть"); } }
-        public static Units UNIT { get { return new Units("штука"); } }
+        public static Units BOTTLE_033 { get { return new Units("бутылка 0.33 л.", "BOTTLE_033"); } }
+        public static Units BOTTLE_05 { get { return new Units("бутылка 0.5 л.", "BOTTLE_05"); } }
+        public static Units BOX { get { return new Units("коробка", "BOX"); } }
+        public static Units CRATE { get { return new Units("ящик", "CRATE"); } }
+        public static Units GLASS_POT { get { return new Units("банка, стекло", "GLASS_POT"); } }
+        public static Units PACK { get { return new Units("пачка", "PACK"); } }
+        public static Units PACKING { get { return new Units("упаковка", "PACKING"); } }
+        public static Units TIN_POT { get { return new Units("банка, жесть", "TIN_POT"); } }
+        public static Units UNIT { get { return new Units("штука", "UNIT"); } }
+
+        public static Units EMPTY { get { return new Units(null, null); } }
 
         public static ReadOnlyCollection<Units> UnitsList = new ReadOnlyCollection<Units>(new List<Units> {
             BOTTLE_033,
@@ -43,20 +48,14 @@ namespace BabylonARM.dto
 
         public static Units FromDbName(String dbName)
         {
-            switch(dbName)
+            foreach(Units u in UnitsList)
             {
-                case "BOTTLE_033": return BOTTLE_033;
-                case "BOTTLE_05": return BOTTLE_05;
-                case "BOX": return BOX;
-                case "CRATE": return CRATE;
-                case "GLASS_POT": return GLASS_POT;
-                case "PACK": return PACK;
-                case "PACKING":return PACKING;
-                case "TIN_POT": return TIN_POT;
-                case "UNIT": return UNIT;
-                default:
-                    throw new ArgumentException("Unexpected unit id");
+                if (u.DbName == dbName)
+                {
+                    return u;
+                }
             }
+            throw new ArgumentException("Unexpected unit id");
         }
     }
 }

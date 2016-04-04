@@ -40,8 +40,14 @@ namespace BabylonARM
             listProducts.DataSource = products;
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ProductCatalog_Load(object sender, EventArgs e)
         {
+            MessageBox.Show("Форма загрузилась");
+        }
+
+        private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь выбрал элемент списка");
             if (listProducts.SelectedItem != null)
             {
                 Current = (Product) listProducts.SelectedItem;
@@ -50,22 +56,22 @@ namespace BabylonARM
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Пользователь нажал кнопку \"Добавить\"");
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Пользователь нажал кнопку \"Обновить\"");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Пользователь нажал кнопку \"Сохранить\"");
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Пользователь нажал кнопку \"Удалить\"");
         }
     }
 }

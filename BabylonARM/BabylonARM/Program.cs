@@ -15,7 +15,7 @@ namespace BabylonARM
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ProductCatalog());
+            Application.Run(new MainMenu());
         }
     }
 }

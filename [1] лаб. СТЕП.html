@@ -16,8 +16,9 @@ clear:both;
 <body>
 <h2>Создание приложения Windows Forms</h2>
 
-<p>Целью этого раздела является знакомство с технологией Windows Forms для построения простой программы на языке C#.
-Основное назначение Windows Forms - создание графического пользовательского интерфейса (GUI).</p>
+<p>Целью этой лабораторной является знакомство с элементами управления Windows Forms.</p>
+
+<p>Основное назначение Windows Forms - создание графического пользовательского интерфейса (GUI).</p>
 <p>Эта технология позволяет использовать следующие компоненты:
 <ul>
 	<li>диалоговые окна</li>
@@ -29,13 +30,18 @@ clear:both;
 </ul>
 По существу, эти элементы управления являются просто классами из библиотеки .NET Framework.</p>
 
-<p>Для того, чтобы открыть панель Конструктор (Toolbox), нужно выбрать в меню View пункт Toolbox.
-images/toolbox.png
+<p>Для того, чтобы открыть панель Конструктор (Toolbox), нужно:
+<ul>
+	<li>Выбрать в меню View пункт Toolbox. При этом слева появится панель Конструктор.</li>
+	<li>Открыть при помощи Обозревателя Решений (Solution Explorer) форму. Панель конструктор отобразит элементы, доступные для данной формы.</li>
+</ul>
 Панель Конструктор(Toolbox) в Visual Studio позволяет перетаскивать мышью элементы управления в основную форму приложения. После этого IDE автоматически добавит исходный код для создания и инициализации экземпляра соответствующего класса.
 Размеры и расположение добавленных элементов управления также можно менять мышью.</p>
+<img src="images/toolbox.png"/>
 
 <p>У каждого из элементов управления есть множество дополнительных свойств. Для того, чтобы работать с ними, нужно открыть панель свойств.
 Щелкните правой кнопкой по свободному месту на форме и выберите пункт Свойства (Properties).</p>
+<img src="images/properties.png"/>
 
 <p>Измените свойства формы:
 <table class="properties">
@@ -43,19 +49,27 @@ images/toolbox.png
 		<th>Тип элемента</th>
 		<th>Наименование свойства</th>
 		<th>Значение</th>
+		<th>Пояснение</th>
 	</tr>
 	<tr>
 		<td rowspan="3">WindowsForm</td>
 		<td>(Name)</td>
 		<td>ProductCatalog</td>
+		<td>Используется для работы с формой из кода программы. Каждой форме соответствует класс. Поэтому ее имя состоит из двух частей:
+<ul>
+	<li>Первая часть (Product) - Назначение формы</li>
+	<li>Вторая часть (Catalog) - Тип формы. В этом случае - "справочник".</li>
+</ul></td>
 	</tr>
 	<tr>
 		<td>StartPosition</td>
 		<td>CenterScreen</td>
+		<td>Расположение формы при запуске программы. Это значение - "в центре экрана".</td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Справочник товаров</td>
+		<td>Текст, отображаемый в шапке формы.</td>
 	</tr>
 </table>
 </p>
@@ -65,209 +79,272 @@ images/toolbox.png
 Основные операции со справочником это изменение, добавление и удаление товаров.
 </p>
 
-<p>
-Расположите на форме и настройте свойства остальных элементов управления.
+<p>Расположите на форме и настройте свойства остальных элементов управления.
+</p>
 <img src="images/ProductCatalog.png"/>
+
+<p>
 <table class="properties">
 	<tr>
 		<th>Тип элемента</th>
 		<th>Наименование свойства</th>
 		<th>Значение</th>
+		<th>Пояснение</th>
 	</tr>
 	<tr>
 		<td rowspan="2">ListBox</td>
 		<td>(Name)</td>
 		<td>listProducts</td>
+		<td>Используется для работы с элементом из кода программы. Должно быть максимально информативным. В рамках дисциплины рассмотрен один из подходов к именованию. Каждому элементу управления соответствует объект - свойство класса формы. Поэтому имя состоит из двух частей:
+<ul>
+	<li>Первая часть (list) - сокращение от типа элемента управления.</li>
+	<li>Вторая часть (Products) - его назначение.</li>
+</ul></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
 		<td>0</td>
+		<td>Когда форма активна, у пользователя есть возможность перемещать курсор между элементами с помощью кнопки Tab и комбинации Shift+Tab. Это свойство определяет порядок перемещения.</td>
 	</tr>
 	
 	<tr>
 		<td rowspan="3">GroupBox</td>
 		<td>(Name)</td>
-		<td>productCard</td>
+		<td>gboxProductCard</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Карточка товара</td>
+		<td>Текст подписи к рамке</td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
 		<td>1</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="3">Button</td>
 		<td>(Name)</td>
 		<td>btnSave</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Сохранить</td>
+		<td>Текст, отображаемый на кнопке</td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>5</td>
+		<td>7</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="3">Button</td>
 		<td>(Name)</td>
 		<td>btnDelete</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Удалить</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>6</td>
+		<td>8</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="3">Button</td>
 		<td>(Name)</td>
 		<td>btnRefresh</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Обновить</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>7</td>
+		<td>9</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="3">Button</td>
 		<td>(Name)</td>
 		<td>btnAdd</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Добавить</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>8</td>
+		<td>10</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">Label</td>
 		<td>(Name)</td>
 		<td>lblName</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Наименование</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">Label</td>
 		<td>(Name)</td>
 		<td>lblUnit</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Единица измерения</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">Label</td>
 		<td>(Name)</td>
 		<td>lblCost</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Цена за единицу</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">Label</td>
 		<td>(Name)</td>
 		<td>lblQuantity</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Text</td>
 		<td>Количество</td>
+		<td></td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">Label</td>
+		<td>(Name)</td>
+		<td>lblProductGroup</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Text</td>
+		<td>Группа товара</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">TextBox</td>
 		<td>(Name)</td>
 		<td>txtName</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>1</td>
+		<td>2</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">TextBox</td>
 		<td>(Name)</td>
 		<td>txtCost</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>3</td>
+		<td>4</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="2">TextBox</td>
 		<td>(Name)</td>
 		<td>txtQuantity</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>4</td>
+		<td>5</td>
+		<td></td>
 	</tr>
 	
 	<tr>
 		<td rowspan="3">ComboBox</td>
 		<td>(Name)</td>
 		<td>cmbUnit</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>TabIndex</td>
-		<td>2</td>
+		<td>3</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Items</td>
-		<td></br>штука</br>пара</td>
+		<td></br>UNIT</br>PACKING</br>PACK</br>BOTTLE_05</br>BOTTLE_033</br>BOX</br>CRATE</br>TIN_POT</br>GLASS_POT</td>
+		<td>Список значений в выпадающем списке. Для данного поля - содержимое колонки UnitId в таблице базы данных Units.</td>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">ComboBox</td>
+		<td>(Name)</td>
+		<td>cmbProductGroup</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>6</td>
+		<td></td>
 	</tr>
 </table>
 </p>
-<p>
-Значения свойства (Name) будет использоваться для работы с элементом из кода программы. Поэтому оно должно быть максимально информативным. В рамках дисциплины рассмотрен один из подходов к именованию:
-Имя состоит из двух частей. Первая часть - сокращение от типа элемента управления. Вторая часть - его назначение. У кнопок это связанное действие. У текстовых полей и надписей это отображаемое свойство предмета.
-</p>
 <h3>Задание для самостоятельного выполнения</h3>
 <p>
-Создайте формы для справочников клиентов и поставщиков.
+Создайте формы для справочников групп товаров, сотрудников и клиентов
 </p>
 <p>
-О клиентах известно:
+О каждой группе товаров известно ее наименование.
+</p>
+<p>
+О каждом клиенте известно:
 <ul>
-	<li>Наименование - Name</li>
-	<li>Адрес - Address</li>
-	<li>ФИО начальника - Chief</li>
+	<li>Наименование (юридического лица) - Name</li>
 	<li>Расчетный счет - CheckingAccount</li>
-	<li>Город - City</li>
 	<li>ИНН - INN</li>
-	<li>ОКОНХ - OKONH</li>
-	<li>ОКПО - OKPO</li>
 </ul>
-О поставщиках известно:
+</p>
+О каждом сотруднике известно:
 <ul>
-	<li>Наименование - Name</li>
+	<li>Имя - FirstName</li>
+	<li>Фамилия - LastName</li>
+	<li>Отчество - FatherName</li>
+	<li>Пол - Gender</li>
+	<li>Дата рождения - BirthDate</li>
+	<li>Статус "в браке" - Marriage</li>
+	<li>Почтовый индекс - PostalIndex</li>
 	<li>Адрес - Address</li>
-	<li>Расчетный счет - CheckingAccount</li>
-	<li>Город - City</li>
-	<li>ИНН - INN</li>
-	<li>ОКОНХ - OKONH</li>
-	<li>ОКПО - OKPO</li>
+	<li>Тип найма - HireType</li>
+	<li>Примечание - Notes</li>
 </ul>
 </p>
 </body>

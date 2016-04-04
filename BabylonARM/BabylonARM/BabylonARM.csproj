@@ -47,6 +47,12 @@
     <Compile Include="dao\ProductsDao.cs" />
     <Compile Include="dto\Product.cs" />
     <Compile Include="dto\Units.cs" />
+    <Compile Include="MainMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainMenu.Designer.cs">
+      <DependentUpon>MainMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProductCatalog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -55,6 +61,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MainMenu.resx">
+      <DependentUpon>MainMenu.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ProductCatalog.resx">
       <DependentUpon>ProductCatalog.cs</DependentUpon>
     </EmbeddedResource>
