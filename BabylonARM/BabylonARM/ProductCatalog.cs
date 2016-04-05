@@ -57,13 +57,19 @@ namespace BabylonARM
             current.Cost = Decimal.Parse(txtCost.Text);
             current.Quantity = Int32.Parse(txtQuantity.Text);
             current.GroupId = Guid.Parse(cmbProductGroup.Text);
-            productDao.update(current);
+            if (productDao.update(current))
+            {
+                MessageBox.Show("Сохранение успешно");
+            }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Пользователь нажал кнопку \"Удалить\"");
-            productDao.delete(current.Id);
+            if (productDao.delete(current.Id))
+            {
+                MessageBox.Show("Удаление успешно");
+            }
         }
     }
 }

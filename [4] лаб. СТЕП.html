@@ -1,0 +1,554 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<style>
+.properties {
+	border-collapse:collapse;
+}
+.properties td, .properties th {
+	border:1px solid black;
+}
+p {
+clear:both;
+}
+p add {
+	color:green;
+}
+p rem {
+	color:red;
+	text-decoration:line-through;
+}
+	</style>
+</head>
+<body>
+<h2>Связь с базой данных</h2>
+
+<p>Целью этой лабораторной является знакомство с технологией получения информации из базы данных.</p>
+
+<h3>Подготовка СУБД</h3>
+<p>Создайте базу данных на локальном сервере PostgreSQL.</p>
+<p>Запустите pgAdmin III. Убедитесь, что в меню Вид-Браузер Объектов поставлена галочка.</p>
+<p>Браузер объектов будет выглядеть примерно так.</p>
+<img src="images/pgAdminObjectBrowserDisconnected.png">
+<p>Дважды щелкните на узел <i>PostgreSQL 9.4 (localhost:5432). Введите имя и пароль, если потребуется.</p>
+<p>Щелкните правой кнопкой мыши на узел <i>Базы данных</i> и выберите пункт <i>Новая база данных</i></p>
+<p>В появившемся окне во вкладке <i>Свойства</i> в поле <i>Имя</i> введите <i>business</i>. После этого в узле <i>Базы данных</i> должен появиться узел <i>business</i></p>
+<p>Выберите узел <i>business</i> и щелкните на кнопку <i>Выполнить пользовательские SQL запросы. На рисунке она обведена красным маркером.</i></p>
+<img src="images/pgAdminObjectBrowserQuery.png">
+<p>В результате должно открыться окно для выполнения запросов.</p>
+<p>При помощи меню <i>Файл - открыть</i> откройте файл с запросом business.sql</i></p>
+<p>Выполните запрос</p>
+<img src="images/pgAdminQueryRunner.png">
+<p>В результате выполнения скрипта, в базе business появится структура таблиц и тестовые данные для работы.</p>
+
+<h3>Подготовка проекта</h3>
+<p>Для связи с любой базой данных, программе нужен драйвер базы данных. Он берет на себя ответственность за технические ньюансы отправки и приема сообщений. Для каждой конкретной базы данных существует свой драйвер.</p>
+<p>В рамках лабораторной работы используется база данных PostgreSQL. Драйвер для нее называется Npgsql.</p>
+<p>Чтобы получить драйвер, нужно воспользоваться утилитой <i>nuget.exe</i>. Нужно запустить ее в консоли со следующими аргументами:
+<p style="white-space:pre;font-family:monospace;">nuget install npgsql -Version 2.2.7</p></p>
+<p>Утилита создаст папку <i>Npgsql.2.2.7</i> в которой будет содержаться библиотека с драйвером.</p>
+<p>Теперь к проекту нужно добавить ссылку на эту библиотеку. Для этого нужно:
+<ul>
+	<li>Открыть <i>Обозреватель Решений (Solution Explorer)</i></li>
+	<li>Щелкнуть правой кнопкой по узлу <i>Ссылки(References)</i></li>
+	<li>Выбрать пункт меню <i>Добавить->Ссылку (Add->Reference)</i></li>
+	<li>Щелкнуть кнопку <i>Обзор...(Browse...)</i></li>
+	<li>Найти и выбрать файл <i>Npgsql.2.2.7/lib/net40/Npgsql.dll</i></li>
+	<li>Щелкнуть кнопку <i>Добавить(Add)</i></li>
+</ul></p>
+
+<h3>Основная часть</h3>
+<p>Теперь нужно указать, что класс ProductsDao будет использовать классы из подключенной библиотеки. Подключите пространства имен Npgsql и NpgsqlTypes в файле с классом ProductsDao.
+<p style="white-space:pre;font-family:monospace;">using Npgsql;
+using NpgsqlTypes;</p></p>
+
+<p>С самого начала подготовим SQL запросы, которые будем отправлять к базе данных. Запросы представляют собой простые строки. Поскольку запросы в целом будут меняться очень редко, они объявлены статическими. Т.е. экземпляр такой строки - общий для всех экземпляров dao класса.</p>
+<p>Запрос на получение данных ничем не отличается от обычного запроса.
+<p style="white-space:pre;font-family:monospace;">private static String GET_LIST_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";</p></p>
+<p>Запрос на получение одного товара содержит в себе изменяемую часть - идентификатор товара. Фрагмент, где нужно его вписывать, помечен токеном <i>:id</i>.
+<p style="white-space:pre;font-family:monospace;">private static String GET_SINGLE_CMD = @"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";</p></p>
+<p>Запрос на вставку товара в таблицу содержит несколько изменяемых частей. Каждую из них помечаем своим токеном.
+<p style="white-space:pre;font-family:monospace;">private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";</p></p>
+<p>Запрос на обновление тоже содержит несколько переменных. Каждую из них помечаем своим токеном. токен должно быть уникально в пределах запроса.
+<p style="white-space:pre;font-family:monospace;">private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";</p></p>
+
+<p>Запрос на удаление выглядит так:
+<p style="white-space:pre;font-family:monospace;">private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";</p></p>
+
+<p>После добавления этих запросов, в исходном коде класса ProductsDao появятся строчки, выделенные зеленым цветом.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+<add>using Npgsql;
+using NpgsqlTypes;</add>
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+<add>        private static String GET_LIST_CMD = 
+@"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";
+
+        private static String GET_SINGLE_CMD = 
+@"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";
+
+        private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";
+
+        private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+desc = :desc,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";
+
+        private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";</add>
+
+        //Получить список товаров
+        public List&lt;Product&gt; getList()
+        {
+            List&lt;Product&gt; result = new List&lt;Product&gt;();
+            result.Add(new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f")) {
+                Name = "Принцесса Нури",
+                GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
+                Unit = "PACK",
+                Weight = 0.1f,
+                Cost = 12m,
+                Quantity = 100
+            });
+            result.Add(new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+            {
+                Name = "Нескафе Классик",
+                GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
+                Unit = "TIN_POT",
+                Weight = 0.05f,
+                Cost = 52m,
+                Quantity = 25
+            });
+            result.Add(new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
+            {
+                Name = "кекс Абрикосовый",
+                GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
+                Unit = "UNIT",
+                Weight = 0.2f,
+                Cost = 24m,
+                Quantity = 12
+            });
+            return result;
+        }
+
+        //Получить товар по идентификатору
+        public Product getById(Guid id)
+        {
+            if (Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f").Equals(id))
+            {
+                return new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f"))
+                {
+                    Name = "Принцесса Нури",
+                    GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
+                    Unit = "PACK",
+                    Weight = 0.1f,
+                    Cost = 12m,
+                    Quantity = 100
+                };
+            }
+            if (Guid.Parse("d28cfd5e10144214ab09c37be1771202").Equals(id))
+            {
+                return new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+                {
+                    Name = "Нескафе Классик",
+                    GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
+                    Unit = "TIN_POT",
+                    Weight = 0.05f,
+                    Cost = 52m,
+                    Quantity = 25
+                };
+            }
+            if (Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895").Equals(id))
+            {
+                return new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
+                {
+                    Name = "кекс Абрикосовый",
+                    GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
+                    Unit = "UNIT",
+                    Weight = 0.2f,
+                    Cost = 24m,
+                    Quantity = 12
+                };
+            }
+        }
+
+        //Добавить товар в базу данных
+        public bool insert(Product p)
+        {
+            return true;
+        }
+
+        //Удалить товар из базы данных по его идентификатору
+        public bool delete(Guid id)
+        {
+            return true;
+        }
+
+        //Обновить данные о товаре в базе данных
+        public bool update(Product p)
+        {
+            return true;
+        }
+    }
+}</p></p>
+
+<p>Общая технология работы с базой данных состоит из шагов:
+<ul>
+	<li>Создать подключение</li>
+	<li>Создать команду</li>
+	<li>Выполнить команду и получить запрос</li>
+	<li>Обработать результат запроса</li>
+</ul></p>
+
+<p>Подключение к базе данных реализуется классом NpgsqlConnection. Конструктор этого класса принимает <i>строку подключения (ConnectionString)</i>. Она содержит в себе адрес сервера, имя пользователя, пароль, наименование базы данных. Полный синтаксис строки подключения можно посмотреть в <a href="http://www.npgsql.org/doc/connection-string-parameters/" target="_blank">документации</a>.
+<p style="white-space:pre;font-family:monospace;">NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");</p>
+</p>
+
+<p>Команда реализуется классом NpgSqlCommand. Конструктор этого класса принимает в себя строку с SQL запросом и экземпляр подключения.</p>
+
+<p>Первым делом инициализируем команду на получение списка товаров.
+<p style="white-space:pre;font-family:monospace;">NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);</p></p>
+
+<p>Команду можно выполнить тремя способами:
+<ul>
+	<li>ExecuteNonQuery - Выполняет запрос и возвращает количество строк, которые были изменены. Подходит для INSERT, DELETE, UPDATE</li>
+	<li>ExecuteReader - Выполняет запрос и возвращает курсор, которым можно обработать результат. Чаще всего используется в запросе SELECT</li>
+	<li>ExecuteScalar - Выполняет запрос и возвращает значение из первой колонку в первой строчке результата запроса. Чаще всего используется в запросе SELECT с агрегирующими функциями.</li>
+</ul>
+</p>
+
+<p>Для получения списка товаров нужно использовать метод ExecuteReader. Полученный объект <i>reader</i> указывает на одну запись из данных в результате. Атрибуты записи находятся в том порядке, в котором они были указаны в запросе. К ним можно обратиться по индексу. Счет индексов начинается с нуля.
+<p style="white-space:pre;font-family:monospace;">        //Получить список товаров
+        public List&lt;Product&gt; getList()
+        {
+            List&lt;Product&gt; result = new List&lt;Product&gt;();
+            <rem>result.Add(new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f")) {
+                Name = "Принцесса Нури",
+                GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
+                Unit = "PACK",
+                Weight = 0.1f,
+                Cost = 12m,
+                Quantity = 100
+            });
+            result.Add(new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+            {
+                Name = "Нескафе Классик",
+                GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
+                Unit = "TIN_POT",
+                Weight = 0.05f,
+                Cost = 52m,
+                Quantity = 25
+            });
+            result.Add(new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
+            {
+                Name = "кекс Абрикосовый",
+                GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
+                Unit = "UNIT",
+                Weight = 0.2f,
+                Cost = 24m,
+                Quantity = 12
+            });</rem>
+            <add>NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                //Конструируем объект из данных в текущей строке
+                Product temp = new Product(reader.GetGuid(0));//Получаем значение типа GUID из первой колонки
+                temp.Name = reader.GetString(1);//Получаем строковое значение из второй колонки
+                temp.GroupId = reader.GetGuid(2);
+                temp.Unit = reader.GetString(3);
+                if (!reader.IsDBNull(4))
+                {
+                    temp.Weight = reader.GetFloat(4);//Получаем дробное значение из пятой колонки
+                }
+                temp.Cost = reader.GetDecimal(5);
+                temp.Quantity = reader.GetInt32(6);//Получаем целое значение из седьмой колонки
+                result.Add(temp);//Добавляем сконструированный объект к результату
+            }
+            connection.Close();</add>
+            return result;
+        }</p></p>
+
+<p>Теперь реализуем вставку данных в таблицу. Этот запрос содержит в себе изменяемые части - параметры. Каждый параметр содержит в себе токен, значение для замены и тип поля в базе данных.</p>
+<p>Идентификатор товара это GUID. При создании нового GUID, вероятность создания дубликата пренебрежимо мала. Поэтому его можно создавать в программе и рассчитывать на то, что конфликта первичного ключа при работе нескольких пользователей не возникнет.
+<p style="white-space:pre;font-family:monospace;">        public bool insert(Product p)
+        {
+            <rem>return true;</rem>
+            <add>NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(INSERT_CMD, connection);
+            cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = Guid.NewGuid() });
+            cmd.Parameters.Add(new NpgsqlParameter(":desc", NpgsqlDbType.Text) { Value = p.Name });
+            cmd.Parameters.Add(new NpgsqlParameter(":groupid", NpgsqlDbType.Uuid) { Value = p.GroupId });
+            cmd.Parameters.Add(new NpgsqlParameter(":unitid", NpgsqlDbType.Text) { Value = p.Unit });
+            cmd.Parameters.Add(new NpgsqlParameter(":weight", NpgsqlDbType.Real) { Value = p.Weight });
+            cmd.Parameters.Add(new NpgsqlParameter(":cost", NpgsqlDbType.Money) { Value = p.Cost });
+            cmd.Parameters.Add(new NpgsqlParameter(":quantity", NpgsqlDbType.Integer) { Value = p.Quantity });
+            bool result = cmd.ExecuteNonQuery() == 1;//Проверяется количество измененных строк
+            connection.Close();//Закрывается подключение
+            return result;
+            //Если вставилось 0 строк, значит запрос выполнился некорректно</add>
+        }</p></p>
+		
+<p>Методы обновления и удаления данных в таблице делаются по аналогии.</p>
+<p>В итоге исходный код класса должен быть таким.
+<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Npgsql;
+using NpgsqlTypes;
+
+
+namespace BabylonARM.dao
+{
+    public class ProductsDao
+    {
+        private static String GET_LIST_CMD =
+@"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products;";
+
+        private static String GET_SINGLE_CMD =
+@"SELECT
+productid,
+description,
+productgroupid,
+unitid,
+weight,
+cost,
+quantity 
+FROM products WHERE productid=:id;";
+
+        private static String INSERT_CMD =
+@"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
+VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";
+
+        private static String UPDATE_CMD =
+@"UPDATE products
+SET productgroupid = :groupid,
+desc = :desc,
+unitid = :unitid,
+weight = :weight,
+cost = :cost,
+quantity = :quantity
+WHERE productid = :id;";
+
+        private static String DELETE_CMD =
+@"DELETE FROM products WHERE productid = :id";
+
+        public List&lt;Product&gt; getList()
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);
+            List&lt;Product&gt; result = new List&lt;Product&gt;();//Коллекция для хранения результата
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                //Конструируем объект из данных в текущей строке
+                Product temp = new Product(reader.GetGuid(0));//Получаем значение типа GUID из первой колонки
+                temp.Name = reader.GetString(1);//Получаем строковое значение из второй колонки
+                temp.GroupId = reader.GetGuid(2);
+                temp.Unit = reader.GetString(3);
+                if (!reader.IsDBNull(4))
+                {
+                    temp.Weight = reader.GetFloat(4);//Получаем дробное значение из пятой колонки
+                }
+                temp.Cost = reader.GetDecimal(5);
+                temp.Quantity = reader.GetInt32(6);//Получаем целое значение из седьмой колонки
+                result.Add(temp);//Добавляем сконструированный объект к результату
+            }
+            connection.Close();
+            return result;
+        }
+
+        public Product getById(Guid id)
+        {
+            if (Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f").Equals(id))
+            {
+                return new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f"))
+                {
+                    Name = "Принцесса Нури",
+                    GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
+                    Unit = "PACK",
+                    Weight = 0.1f,
+                    Cost = 12m,
+                    Quantity = 100
+                };
+            }
+            if (Guid.Parse("d28cfd5e10144214ab09c37be1771202").Equals(id))
+            {
+                return new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+                {
+                    Name = "Нескафе Классик",
+                    GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
+                    Unit = "TIN_POT",
+                    Weight = 0.05f,
+                    Cost = 52m,
+                    Quantity = 25
+                };
+            }
+            if (Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895").Equals(id))
+            {
+                return new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
+                {
+                    Name = "кекс Абрикосовый",
+                    GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
+                    Unit = "UNIT",
+                    Weight = 0.2f,
+                    Cost = 24m,
+                    Quantity = 12
+                };
+            }
+        }
+
+        public bool insert(Product p)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(INSERT_CMD, connection);
+            cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = Guid.NewGuid() });
+            cmd.Parameters.Add(new NpgsqlParameter(":desc", NpgsqlDbType.Text) { Value = p.Name });
+            cmd.Parameters.Add(new NpgsqlParameter(":groupid", NpgsqlDbType.Uuid) { Value = p.GroupId });
+            cmd.Parameters.Add(new NpgsqlParameter(":unitid", NpgsqlDbType.Text) { Value = p.Unit });
+            cmd.Parameters.Add(new NpgsqlParameter(":weight", NpgsqlDbType.Real) { Value = p.Weight });
+            cmd.Parameters.Add(new NpgsqlParameter(":cost", NpgsqlDbType.Money) { Value = p.Cost });
+            cmd.Parameters.Add(new NpgsqlParameter(":quantity", NpgsqlDbType.Integer) { Value = p.Quantity });
+            bool result = cmd.ExecuteNonQuery() == 1;//Проверяется количество измененных строк
+            connection.Close();//Закрывается подключение
+            return result;
+            //Если вставилось 0 строк, значит запрос выполнился некорректно
+        }
+
+        public bool delete(Guid id)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(DELETE_CMD, connection);
+            cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = id });
+            bool result = cmd.ExecuteNonQuery() == 1;
+            connection.Close();
+            return result;
+        }
+
+        public bool update(Product p)
+        {
+            NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
+            connection.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand(UPDATE_CMD, connection);
+            cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = p.Id });
+            cmd.Parameters.Add(new NpgsqlParameter(":desc", NpgsqlDbType.Text) { Value = p.Name });
+            cmd.Parameters.Add(new NpgsqlParameter(":groupid", NpgsqlDbType.Uuid) { Value = p.GroupId });
+            cmd.Parameters.Add(new NpgsqlParameter(":unitid", NpgsqlDbType.Text) { Value = p.Unit });
+            cmd.Parameters.Add(new NpgsqlParameter(":weight", NpgsqlDbType.Real) { Value = p.Weight });
+            cmd.Parameters.Add(new NpgsqlParameter(":cost", NpgsqlDbType.Money) { Value = p.Cost });
+            cmd.Parameters.Add(new NpgsqlParameter(":quantity", NpgsqlDbType.Integer) { Value = p.Quantity });
+            bool result = cmd.ExecuteNonQuery() == 1;
+            connection.Close();
+            return result;
+        }
+    }
+}</p></p>
+
+<p>Проверьте сценарии:</p>
+<p>Сценарий 1
+<ul>
+	<li>Запустить программу</li>
+	<li>Открыть справочник товаров.</li>
+	<li>Список товаров должен заполниться.</li>
+	<li>Выбрать поочередно все товары в списке.</li>
+	<li>Отображаемые значения свойств товара должны меняться.</li>
+</ul>
+Сценарий 2
+<ul>
+	<li>Запустить программу</li>
+	<li>Открыть справочник товаров.</li>
+	<li>Список товаров должен заполниться.</li>
+	<li>Выбрать в списке <i>Принцесса Нури</i>.</li>
+	<li>Нажать кнопку <i>Удалить</i>.</li>
+	<li>Должно появиться сообщение <i>Удаление 'Принцесса Нури' успешно</i>.</li>
+	<li>Нажать кнопку <i>Обновить</i></li>
+	<li>Список товаров должен обновиться. Товара <i>Принцесса Нури</i> в списке быть не должно</li>
+</ul>
+Сценарий 3
+<ul>
+	<li>Запустить программу</li>
+	<li>Открыть справочник товаров.</li>
+	<li>Список товаров должен заполниться.</li>
+	<li>Выбрать в списке <i>кекс Абрикосовый</i>.</li>
+	<li>Изменить значение в поле <i>Наименование</i> на <i>капкейк "Aбрикос"</i>.</li>
+	<li>Нажать кнопку <i>Сохранить</i></li>
+	<li>Должно появиться сообщение <i>Сохранение 'капкейк "Aбрикос"' успешно</i>.</li>
+	<li>Нажать кнопку <i>Обновить</i>.</li>
+	<li>Список товаров должен обновиться. Вместо товара <i>кекс Абрикосовый</i> должен появиться товар <i>капкейк "Абрикос"</i>.</li>
+</ul>
+</p>
+<h3>Задание для самостоятельного выполнения</h3>
+<p>Создайте DTO и DAO классы для справочников групп товаров, сотрудников и клиентов.</p>
+</body>
+</html>

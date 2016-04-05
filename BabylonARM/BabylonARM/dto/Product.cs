@@ -7,7 +7,12 @@ namespace BabylonARM.dto
 {
     public class Product
     {
-        public Guid Id { get; set; }
+        public Product(Guid id)
+        {
+            this.Id = id;
+        }
+
+        public Guid Id { get; private set; }
         public String Name { get; set; }
         public String Unit { get; set; }
         public Guid GroupId { get; set; }

@@ -11,6 +11,13 @@
 p {
 clear:both;
 }
+p add {
+	color:green;
+}
+p rem {
+	color:red;
+	text-decoration:line-through;
+}
 	</style>
 </head>
 <body>
@@ -30,7 +37,7 @@ clear:both;
 </ul>
 </p>
 
-<p>Откройте форму и перейдите к ее исходному коду клавишей F7. Добавьте строчки, выделенные в листинге зеленым цветом.
+<p>Откройте форму ProductCatalog и перейдите к ее исходному коду клавишей F7. Добавьте строчки, выделенные в листинге зеленым цветом.
 <p style="white-space:pre;font-family:monospace;">
 using System;
 using System.Collections.Generic;
@@ -50,7 +57,7 @@ namespace BabylonARM
             InitializeComponent();
         }
 
-<span style="color:green">        //Обработчик загрузки формы
+<add>        //Обработчик загрузки формы
         private void ProductCatalog_Load(object sender, EventArgs e)
         {
             MessageBox.Show("Форма загрузилась");
@@ -59,7 +66,7 @@ namespace BabylonARM
         //Обработчик выбора элемента в списке
         private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
         {
-		    //Простое сообщение пользователю
+            //Простое сообщение пользователю
             MessageBox.Show("Пользователь выбрал элемент списка");
         }
 		
@@ -85,7 +92,7 @@ namespace BabylonARM
         private void btnDelete_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Пользователь нажал кнопку \"Удалить\"");
-        }</span>
+        }</add>
     }
 }
 </p>
@@ -284,15 +291,14 @@ namespace BabylonARM
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new <span style="color:red;text-decoration:line-through;">ProductCatalog</span><span style="color:green">MainMenu</span>());
+            Application.Run(new <rem>ProductCatalog</rem><add>MainMenu</add>());
         }
     }
 }
 </p>
 </p>
 
-<p>Проверьте сценарии:
-</p>
+<p>Проверьте сценарии:</p>
 <p>
 Сценарий 1
 <ul>
