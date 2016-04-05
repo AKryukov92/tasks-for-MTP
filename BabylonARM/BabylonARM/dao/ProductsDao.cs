@@ -49,8 +49,7 @@ WHERE productid = :id;";
 
         private static String DELETE_CMD =
     @"DELETE FROM products WHERE productid = :id";
-
-        private String connectionString;
+        
         public List<Product> getList()
         {
             NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");

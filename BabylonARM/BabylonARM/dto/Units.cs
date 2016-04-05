@@ -6,12 +6,12 @@ using System.Text;
 
 namespace BabylonARM.dto
 {
-    public struct Units
+    public struct Unit
     {
         private String description;
         public String DbName { private set; get; }
 
-        private Units(String description, String dbName)
+        private Unit(String description, String dbName)
         {
             this.description = description;
             this.DbName = dbName;
@@ -19,36 +19,34 @@ namespace BabylonARM.dto
 
         public override string ToString()
         {
+            if (description == null)
+            {
+                return "";
+            }
             return description;
         }
 
-        public static Units BOTTLE_033 { get { return new Units("бутылка 0.33 л.", "BOTTLE_033"); } }
-        public static Units BOTTLE_05 { get { return new Units("бутылка 0.5 л.", "BOTTLE_05"); } }
-        public static Units BOX { get { return new Units("коробка", "BOX"); } }
-        public static Units CRATE { get { return new Units("ящик", "CRATE"); } }
-        public static Units GLASS_POT { get { return new Units("банка, стекло", "GLASS_POT"); } }
-        public static Units PACK { get { return new Units("пачка", "PACK"); } }
-        public static Units PACKING { get { return new Units("упаковка", "PACKING"); } }
-        public static Units TIN_POT { get { return new Units("банка, жесть", "TIN_POT"); } }
-        public static Units UNIT { get { return new Units("штука", "UNIT"); } }
+        //Для того, чтобы было эквивалентно неинициализированному значению
+        public static Unit EMPTY = new Unit(null, null);
 
-        public static Units EMPTY { get { return new Units(null, null); } }
-
-        public static ReadOnlyCollection<Units> UnitsList = new ReadOnlyCollection<Units>(new List<Units> {
-            BOTTLE_033,
-            BOTTLE_05,
-            BOX,
-            CRATE,
-            GLASS_POT,
-            PACK,
-            PACKING,
-            TIN_POT,
-            UNIT
+        //Этот список - отступление от принципов SOLID
+        //Но в данной ситуации это разумный компромисс: минимум вспомогательного кода при данных требованиях
+        public static ReadOnlyCollection<Unit> UnitsList = new ReadOnlyCollection<Unit>(new List<Unit> {
+            EMPTY,
+            new Unit("бутылка 0.33 л.", "BOTTLE_033"),
+            new Unit("бутылка 0.5 л.",  "BOTTLE_05"),
+            new Unit("коробка",         "BOX"),
+            new Unit("ящик",            "CRATE"),
+            new Unit("банка, стекло",   "GLASS_POT"),
+            new Unit("пачка",           "PACK"),
+            new Unit("упаковка",        "PACKING"),
+            new Unit("банка, жесть",    "TIN_POT"),
+            new Unit("штука",           "UNIT")
         });
 
-        public static Units FromDbName(String dbName)
+        public static Unit FromDbName(String dbName)
         {
-            foreach(Units u in UnitsList)
+            foreach(Unit u in UnitsList)
             {
                 if (u.DbName == dbName)
                 {

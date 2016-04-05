@@ -19,7 +19,7 @@ namespace BabylonARM
         public ProductCatalog()
         {
             InitializeComponent();
-            productDao = new ProductsDao("");
+            productDao = new ProductsDao();
         }
 
         private void ProductCatalog_Load(object sender, EventArgs e)
