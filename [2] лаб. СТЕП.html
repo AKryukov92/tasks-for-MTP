@@ -18,6 +18,10 @@ p rem {
 	color:red;
 	text-decoration:line-through;
 }
+.code {
+	white-space:pre;
+	font-family:monospace;
+}
 	</style>
 </head>
 <body>
@@ -38,7 +42,7 @@ p rem {
 </p>
 
 <p>Откройте форму ProductCatalog и перейдите к ее исходному коду клавишей F7. Добавьте строчки, выделенные в листинге зеленым цветом.
-<p style="white-space:pre;font-family:monospace;">
+<p class="code">
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -232,7 +236,7 @@ namespace BabylonARM
 
 У каждой кнопки назначьте обработчик события Click.
 <p>Исходный код формы должен выглядеть примерно так.
-<p style="white-space:pre;font-family:monospace;">using System;
+<p class="code">using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -274,7 +278,7 @@ namespace BabylonARM
 </p>
 
 <p>Теперь нужно сделать так, чтобы меню появлялось при запуске программы. Для этого нужно открыть файл Program.cs и изменить в нем одну команду.
-<p style="white-space:pre;font-family:monospace;">using System;
+<p class="code">using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;

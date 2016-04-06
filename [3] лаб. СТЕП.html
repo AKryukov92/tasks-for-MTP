@@ -18,6 +18,10 @@ p rem {
 	color:red;
 	text-decoration:line-through;
 }
+.code {
+	white-space:pre;
+	font-family:monospace;
+}
 	</style>
 </head>
 <body>
@@ -40,7 +44,7 @@ p rem {
 
 <p>Количество полей DTO обычно соответствует количеству полей таблицы в базе данных.</p>
 <p>Создайте в проекте папку "DTO" и в ней создайте новый класс <i>Product</i>.
-<p style="white-space:pre;font-family:monospace;">using System;
+<p class="code">using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +64,7 @@ namespace BabylonARM.dto
 }</p></p>
 
 <p>Товар в базе данных уникально идентифицируется полем <i>id</i>. Изменение id товара значит, что весь объект описывает совершенно другой товар. Возможность менять идентификатор в объекте может привести к путанице и непредвиденным ситуациям. Как правило, id задают при создании товара и запрещают любые последующие изменения. Такой подход гарантирует, что один и тот же объект всегда будет соответствовать одному и тому же товару.
-<p style="white-space:pre;font-family:monospace;">using System;
+<p class="code">using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -95,7 +99,7 @@ namespace BabylonARM.dto
 </ul>
 В зависимости от потребностей, список методов может сокращаться или расширяться. Если данные об объекте нельзя удалять - не будет метода удаления. Если нужно получать не весь список, а отфильтрованный - метод получения списка будет принимать дополнительные аргументы.</p>
 <p>Создайте в проекте папку "DAO" и в ней создайте новый класс <i>ProductsDao</i>.
-<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+<p class="code">using BabylonARM.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -134,7 +138,7 @@ namespace BabylonARM.dao
 }</p></p>
 
 <p>На этом этапе, методы класса ProductsDao будут простыми заглушками. getList должен возвращать готовый список, getById - заранее определенный объект. insert, delete и update - отрабатывать с положительным результатом.
-<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+<p class="code">using BabylonARM.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -248,7 +252,7 @@ namespace BabylonARM.dao
 <li>При выборе элемента списка (listProducts_SelectedIndexChanged) нужно заполнить поля формы данными</li>
 <li>При нажатии на кнопку "Удалить" нужно вызвать метод dao.delete и указать идентификатор выбранного объекта</li>
 <li>При нажатии на кнопку "Сохранить", нужно переписать данные из полей на форме в поля выбранного объекта</li>
-</ul><p style="white-space:pre;font-family:monospace;">using BabylonARM.dao;
+</ul><p class="code">using BabylonARM.dao;
 using BabylonARM.dto;
 using System;
 using System.Collections.Generic;
@@ -335,7 +339,7 @@ namespace BabylonARM
 <p>Если сейчас запустить форму, то в списке товаров не будут отображаться названия товаров. Элемент управления вызывает у каждого объекта метод ToString и отображает результат. Этот метод определен в базовом классе Object, от которого наследуются все классы. Метод Object::ToString возвращает имя класса.
 В данном случае, нужно отображать поле Name.</p>
 <p>Добавьте метод ToString в класс Product.
-<p style="white-space:pre;font-family:monospace;">using System;
+<p class="code">using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

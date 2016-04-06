@@ -1,5 +1,7 @@
 ﻿using BabylonARM.dao;
 using BabylonARM.dto;
+using BabylonARM.presenter;
+using BabylonARM.view;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,18 +15,28 @@ namespace BabylonARM
 {
     public partial class ProductCatalog : Form
     {
+        private ProductCatalogPresenter presenter;
         private Product current;
-        private ProductsDao productDao;
 
         public ProductCatalog()
         {
             InitializeComponent();
-            productDao = new ProductsDao();
+            presenter = new ProductCatalogPresenter(this);
+        }
+
+        public void displayProducts(IList<Product> value)
+        {
+            listProducts.DataSource = value;
+        }
+
+        public void NotifyUser(string message)
+        {
+            MessageBox.Show(message);
         }
 
         private void ProductCatalog_Load(object sender, EventArgs e)
         {
-            listProducts.DataSource = productDao.getList();
+            presenter.loadProducts();
         }
 
         private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
@@ -47,7 +59,7 @@ namespace BabylonARM
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            listProducts.DataSource = productDao.getList();
+            presenter.loadProducts();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -57,19 +69,17 @@ namespace BabylonARM
             current.Cost = Decimal.Parse(txtCost.Text);
             current.Quantity = Int32.Parse(txtQuantity.Text);
             current.GroupId = Guid.Parse(cmbProductGroup.Text);
-            if (productDao.update(current))
-            {
-                MessageBox.Show("Сохранение успешно");
-            }
+            presenter.save(current);
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Пользователь нажал кнопку \"Удалить\"");
-            if (productDao.delete(current.Id))
-            {
-                MessageBox.Show("Удаление успешно");
-            }
+            presenter.delete(current);
+        }
+
+        private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+            presenter.filterWith(txtFilter.Text);
         }
     }
 }

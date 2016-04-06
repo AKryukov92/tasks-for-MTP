@@ -44,15 +44,16 @@
             this.lblProductGroup = new System.Windows.Forms.Label();
             this.cmbProductGroup = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.txtFilter = new System.Windows.Forms.TextBox();
             this.gboxProductCard.SuspendLayout();
             this.SuspendLayout();
             // 
             // listProducts
             // 
             this.listProducts.FormattingEnabled = true;
-            this.listProducts.Location = new System.Drawing.Point(12, 12);
+            this.listProducts.Location = new System.Drawing.Point(12, 38);
             this.listProducts.Name = "listProducts";
-            this.listProducts.Size = new System.Drawing.Size(156, 147);
+            this.listProducts.Size = new System.Drawing.Size(156, 121);
             this.listProducts.TabIndex = 0;
             this.listProducts.SelectedIndexChanged += new System.EventHandler(this.listProducts_SelectedIndexChanged);
             // 
@@ -217,11 +218,20 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // txtFilter
+            // 
+            this.txtFilter.Location = new System.Drawing.Point(12, 12);
+            this.txtFilter.Name = "txtFilter";
+            this.txtFilter.Size = new System.Drawing.Size(156, 20);
+            this.txtFilter.TabIndex = 9;
+            this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
+            // 
             // ProductCatalog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(414, 197);
+            this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.gboxProductCard);
             this.Controls.Add(this.btnAdd);
@@ -233,6 +243,7 @@
             this.gboxProductCard.ResumeLayout(false);
             this.gboxProductCard.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -254,6 +265,7 @@
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Label lblProductGroup;
         private System.Windows.Forms.ComboBox cmbProductGroup;
+        private System.Windows.Forms.TextBox txtFilter;
     }
 }
 

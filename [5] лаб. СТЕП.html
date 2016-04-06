@@ -1,0 +1,303 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<style>
+.properties {
+	border-collapse:collapse;
+}
+.properties td, .properties th {
+	border:1px solid black;
+}
+p {
+clear:both;
+}
+p add {
+	color:green;
+}
+p rem {
+	color:red;
+	text-decoration:line-through;
+}
+.code {
+	white-space:pre;
+	font-family:monospace;
+}
+	</style>
+</head>
+<body>
+<h2>Отделение бизнес-логики от представления.</h2>
+
+<p>Целью этой лабораторной является знакомство с одной из техник отделения бизнес-логики от представления.</p>
+<p>Бизнес-логика (логика предметной области, domain logic) это реализация предметной области в информационной системе. Совокупность правил, принципов, зависимостей поведения объектов предметной области.</p>
+<p>Представление (View) это компонент программы, который занимается отображением данных и первичной обработкой действий пользователя.</p>
+
+<p>В технологии Windows Forms функции представления лежат на классах форм. Элементы управления отображают данные. Действия пользователя порождают события, которые обрабатываются специальными методами. Ответственность за действия программы с точки зрения бизнес-логики обычно передают другому классу. Такой подход позволит модифицировать графический интерфейс без риска испортить бизнес-логику программы.</p>
+
+<p>Существует множество техник отделения бизнес-логики от представления. С технологией Windows Forms чаще всего применяется шаблон Model-View-Presenter (MVP).</p>
+
+<p>MVP — шаблон проектирования пользовательского интерфейса, который был разработан для облегчения автоматического модульного тестирования и для отделения логики программы от отображения.</p>
+<p>Основные компоненты:
+<ul>
+	<li>Модель (Model) - предоставляет данные для пользовательского интерфейса</li>
+	<li>Представление (View) - реализует отображение данных, обрабатывает действия пользователя и передает их Презентеру</li>
+	<li>Презентер (Presenter) - управляет Моделью и Представлением.</li>
+</ul></p>
+
+<p>Модель реализуется DAO классами. Представление - формой. Чтобы реализовать этот шаблон проектирования, не хватает только Презентера.</p>
+
+<p>В рамках лабораторной с помощью презентера будут решены следующие задачи:
+<ul>
+<li>Фильтр товаров по названию</li>
+<li>Добавление нового товара в базу</li>
+</ul></p>
+
+<h3>Фильтр товаров по названию</h3>
+<p>Для получения отфильтрованного списка, нужно выполнить два шага:
+<ul>
+	<li>Загрузить все данные по товарам</li>
+	<li>Применить фильтр к получившемуся списку</li>
+</ul></p>
+<p>Согласно шаблону, у презентера должна находиться ссылка на представление. Форма с точки зрения презентера будет исполнителем, который понимает команду "отобрази список". Далее список команд будет дополнен.</p>
+
+<p>Создайте в проекте папку presenter и в ней создайте класс ProductCatalogPresenter. Добавьте два метода: загрузку списка товаров и применение фильтра. Эти методы ничего не должны возвращать.
+<p class="code">using BabylonARM.dao;
+using BabylonARM.dto;
+using BabylonARM.view;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+
+namespace BabylonARM.presenter
+{
+    public class ProductCatalogPresenter
+    {
+        private ProductsDao productDao;	//Ссылка на dao
+        private ProductCatalog view;	//Ссылка на представление
+        private List&lt;Product&gt; cached = new List&lt;Product&gt;();//Коллекция для хранения полного списка товаров из базы
+        private String filter = "";	//Фильтр по-умолчанию
+
+        //Презентер не имеет смысла без представления(формы).
+        //Поэтому ссылка на форму должна передаваться при создании презентера
+        public ProductCatalogPresenter(ProductCatalog view)
+        {
+            //Нужно проверить наличие объекта по ссылке
+            if (view == null)
+            {
+                throw new ArgumentException("Представление не инициализировано");
+            }
+            this.view = view;
+            productDao = new ProductsDao();
+        }
+
+        //Загрузка списка товаров. Будет вызываться при запуске приложения и вручную по требованию
+        //Тип возвращаемого значения void потому что результат работы презентера - вызов команд представления
+        public void loadProducts()
+        {
+            //Загружаем список товаров из базы
+            cached = productDao.getList();
+            //Фильтрум данные и командуем представлению "отобрази список"
+            displayResult();
+        }
+
+        //Фильтрация списка товаров
+        public void filterWith(String value)
+        {
+            //Запоминаем фильтр и преобразуем в нижний регистр
+            filter = value.ToLower();
+            //Фильтрум данные и командуем представлению "отобрази список"
+            displayResult();
+        }
+        
+        //Загрузка списка товаров может запускаться вручную.
+		//Это значит, что может случиться ситуация когда пользователь задал фильтр и вызвал обновление.
+		//В этом случае фильтр нужно применять к загруженным данным
+        private void displayResult()
+        {
+            if (!String.IsNullOrWhiteSpace(filter))
+            {
+                List&lt;Product&gt; filtered = new List&lt;Product&gt;();
+                //Просто перебираем все товары и заполняем новый список.
+                foreach (Product p in cached)
+                {
+                    //Сравниваем наименования в нижнем регистре
+                    if (p.Name.ToLower().Contains(filter))
+                    {
+                        filtered.Add(p);
+                    }
+                }
+                //У представления будет ссылка на коллекцию, а значит будет возможность добавлять и удалять товары из этого списка
+                //Но подобные действия должны проводиться только через презентер
+                //Поэтому презентер возвращает коллекцию с доступом "только для чтения"
+                view.displayProducts(new ReadOnlyCollection&lt;Product&gt;(filtered));
+            }
+            else
+            {
+                view.displayProducts(new ReadOnlyCollection&lt;Product&gt;(cached));
+            }
+        }
+    }
+}</p></p>
+
+<p>Добавьте новое текстовое поле на форму и настройте ее свойства.</p>
+<table class="properties">
+	<tr>
+		<th>Тип элемента</th>
+		<th>Наименование свойства</th>
+		<th>Значение</th>
+	</tr>
+	
+	<tr>
+		<td rowspan="2">TextBox</td>
+		<td>(Name)</td>
+		<td>txtFilter</td>
+	</tr>
+	<tr>
+		<td>TabIndex</td>
+		<td>0</td>
+	</tr>
+</table></p>
+<table>
+	<tr>
+		<th>было</th>
+		<th>стало</th>
+	</tr>
+	<tr>
+		<td><img src="images/ProductCatalog.png"/></td>
+		<td><img src="images/ProductCatalogFilter.png"/></td>
+	</tr>
+</table>
+<p>Назначьте обработчик события "редактирование текста" новому полю.</p>
+<table class="properties">
+	<tr>
+		<th>(Name) элемента</th>
+		<th>Событие</th>
+		<th>Название метода-обработчика</th>
+	</tr>
+	<tr>
+		<td>txtFilter</td>
+		<td>TextChanged</td>
+		<td>txtFilter_TextChanged</td>
+	</tr>
+</table>
+<p>Теперь нужно изменить исходный код формы.
+<ul>
+	<li>Добавить ссылку на презентер</li>
+	<li>Метод "отобразить товары", который будет использоваться презентером</li>
+	<li>Вызывать презентер в обработчиках событий кнопоки "обновить" и загрузки формы</li>
+	<li>Вызывать презентер в обработчике ввода текста в фильтр</li>
+</ul>
+<p class="code">using BabylonARM.dao;
+using BabylonARM.dto;
+using BabylonARM.presenter;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace BabylonARM
+{
+    public partial class ProductCatalog : Form
+    {
+        <add>private ProductCatalogPresenter presenter;//Ссылка на презентер</add>
+        private Product current;//Объявление "текущего товара"
+        private ProductsDao productDao;//Объявление DAO
+
+        public ProductCatalog()
+        {
+            InitializeComponent();
+            <add>presenter = new ProductCatalogPresenter(this);//Инициализация презентера</add>
+            productDao = new ProductsDao();//Инициализация DAO
+        }
+		
+        <add>//Метод для презентера
+        public void displayProducts(IList&lt;Product&gt; value)
+        {
+            listProducts.DataSource = value;
+        }</add>
+		
+        private void ProductCatalog_Load(object sender, EventArgs e)
+        {
+            <rem>listProducts.DataSource = productDao.getList();</rem>
+            <add>presenter.loadProducts(); //Запуск обновления списка товаров</add>
+        }
+
+        private void listProducts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listProducts.SelectedItem != null)
+            {
+                current = (Product) listProducts.SelectedItem;//"Текущий товар" указывает на выбранный элемент
+                //Заполняем поля на форме
+                txtName.Text = current.Name;
+                cmbUnit.SelectedItem = current.Unit;
+                txtCost.Text = current.Cost.ToString();
+                txtQuantity.Text = current.Quantity.ToString();
+                cmbProductGroup.Text = current.GroupId.ToString();
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Пользователь нажал кнопку \"Добавить\"");
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            <rem>listProducts.DataSource = productDao.getList();//Получение списка товаров</rem>
+            <add>presenter.loadProducts();</add>
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            //Сбор данных из полей формы
+            current.Name = txtName.Text;
+            current.Unit = cmbUnit.SelectedItem.ToString();
+            current.Cost = Decimal.Parse(txtCost.Text);
+            current.Quantity = Int32.Parse(txtQuantity.Text);
+            current.GroupId = Guid.Parse(cmbProductGroup.Text);
+            if (productDao.update(current))//Если метод обновление товара вернул "истина"
+            {
+                MessageBox.Show("Сохранение '" + current.Name + "' успешно");
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (productDao.delete(current.Id))//Если метод удаления товара вернул "истина"
+            {
+                MessageBox.Show("Удаление '" + current.Name + "' успешно");
+            }
+        }
+
+        <add>private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+            presenter.filterWith(txtFilter.Text);
+        }</add>
+    }
+}</p></p>
+
+<p>Проверьте сценарии:</p>
+<p>Сценарий 1
+<ul>
+	<li>Запустить программу</li>
+	<li>Открыть справочник товаров.</li>
+	<li>Список товаров должен заполниться.</li>
+	<li>Выбрать поочередно все товары в списке.</li>
+	<li>Отображаемые значения свойств товара должны меняться.</li>
+</ul>
+</p>
+<p>
+<ul>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul></p>
+</body>
+</html>

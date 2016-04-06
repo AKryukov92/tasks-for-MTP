@@ -18,6 +18,10 @@ p rem {
 	color:red;
 	text-decoration:line-through;
 }
+.code {
+	white-space:pre;
+	font-family:monospace;
+}
 	</style>
 </head>
 <body>
@@ -30,7 +34,7 @@ p rem {
 <p>Запустите pgAdmin III. Убедитесь, что в меню Вид-Браузер Объектов поставлена галочка.</p>
 <p>Браузер объектов будет выглядеть примерно так.</p>
 <img src="images/pgAdminObjectBrowserDisconnected.png">
-<p>Дважды щелкните на узел <i>PostgreSQL 9.4 (localhost:5432). Введите имя и пароль, если потребуется.</p>
+<p>Дважды щелкните на узел <i>PostgreSQL 9.4 (localhost:5432),</i>. Введите имя и пароль, если потребуется.</p>
 <p>Щелкните правой кнопкой мыши на узел <i>Базы данных</i> и выберите пункт <i>Новая база данных</i></p>
 <p>В появившемся окне во вкладке <i>Свойства</i> в поле <i>Имя</i> введите <i>business</i>. После этого в узле <i>Базы данных</i> должен появиться узел <i>business</i></p>
 <p>Выберите узел <i>business</i> и щелкните на кнопку <i>Выполнить пользовательские SQL запросы. На рисунке она обведена красным маркером.</i></p>
@@ -45,7 +49,7 @@ p rem {
 <p>Для связи с любой базой данных, программе нужен драйвер базы данных. Он берет на себя ответственность за технические ньюансы отправки и приема сообщений. Для каждой конкретной базы данных существует свой драйвер.</p>
 <p>В рамках лабораторной работы используется база данных PostgreSQL. Драйвер для нее называется Npgsql.</p>
 <p>Чтобы получить драйвер, нужно воспользоваться утилитой <i>nuget.exe</i>. Нужно запустить ее в консоли со следующими аргументами:
-<p style="white-space:pre;font-family:monospace;">nuget install npgsql -Version 2.2.7</p></p>
+<p class="code">nuget install npgsql -Version 2.2.7</p></p>
 <p>Утилита создаст папку <i>Npgsql.2.2.7</i> в которой будет содержаться библиотека с драйвером.</p>
 <p>Теперь к проекту нужно добавить ссылку на эту библиотеку. Для этого нужно:
 <ul>
@@ -59,12 +63,13 @@ p rem {
 
 <h3>Основная часть</h3>
 <p>Теперь нужно указать, что класс ProductsDao будет использовать классы из подключенной библиотеки. Подключите пространства имен Npgsql и NpgsqlTypes в файле с классом ProductsDao.
-<p style="white-space:pre;font-family:monospace;">using Npgsql;
+<p class="code">using Npgsql;
 using NpgsqlTypes;</p></p>
 
-<p>С самого начала подготовим SQL запросы, которые будем отправлять к базе данных. Запросы представляют собой простые строки. Поскольку запросы в целом будут меняться очень редко, они объявлены статическими. Т.е. экземпляр такой строки - общий для всех экземпляров dao класса.</p>
+<p>С самого начала подготовим SQL запросы, которые будем отправлять к базе данных. Запросы представляют собой простые строки. Поскольку запросы в целом будут меняться очень редко, они объявлены статическими. То есть экземпляр такой строки - общий для всех экземпляров dao класса. Символ "@" перед первой кавычкой позволяет написать запрос на нескольких строчках.</p>
 <p>Запрос на получение данных ничем не отличается от обычного запроса.
-<p style="white-space:pre;font-family:monospace;">private static String GET_LIST_CMD = @"SELECT
+<p class="code">private static String GET_LIST_CMD =
+@"SELECT
 productid,
 description,
 productgroupid,
@@ -74,7 +79,8 @@ cost,
 quantity 
 FROM products;";</p></p>
 <p>Запрос на получение одного товара содержит в себе изменяемую часть - идентификатор товара. Фрагмент, где нужно его вписывать, помечен токеном <i>:id</i>.
-<p style="white-space:pre;font-family:monospace;">private static String GET_SINGLE_CMD = @"SELECT
+<p class="code">private static String GET_SINGLE_CMD =
+@"SELECT
 productid,
 description,
 productgroupid,
@@ -84,11 +90,11 @@ cost,
 quantity 
 FROM products WHERE productid=:id;";</p></p>
 <p>Запрос на вставку товара в таблицу содержит несколько изменяемых частей. Каждую из них помечаем своим токеном.
-<p style="white-space:pre;font-family:monospace;">private static String INSERT_CMD =
+<p class="code">private static String INSERT_CMD =
 @"INSERT INTO products(productid, description, productgroupid, unitid, weight, cost, quantity)
 VALUES (:id, :desc, :groupid, :unitid, :weight, :cost, :quantity);";</p></p>
 <p>Запрос на обновление тоже содержит несколько переменных. Каждую из них помечаем своим токеном. токен должно быть уникально в пределах запроса.
-<p style="white-space:pre;font-family:monospace;">private static String UPDATE_CMD =
+<p class="code">private static String UPDATE_CMD =
 @"UPDATE products
 SET productgroupid = :groupid,
 unitid = :unitid,
@@ -98,11 +104,11 @@ quantity = :quantity
 WHERE productid = :id;";</p></p>
 
 <p>Запрос на удаление выглядит так:
-<p style="white-space:pre;font-family:monospace;">private static String DELETE_CMD =
+<p class="code">private static String DELETE_CMD =
 @"DELETE FROM products WHERE productid = :id";</p></p>
 
 <p>После добавления этих запросов, в исходном коде класса ProductsDao появятся строчки, выделенные зеленым цветом.
-<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+<p class="code">using BabylonARM.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -256,13 +262,13 @@ WHERE productid = :id;";
 </ul></p>
 
 <p>Подключение к базе данных реализуется классом NpgsqlConnection. Конструктор этого класса принимает <i>строку подключения (ConnectionString)</i>. Она содержит в себе адрес сервера, имя пользователя, пароль, наименование базы данных. Полный синтаксис строки подключения можно посмотреть в <a href="http://www.npgsql.org/doc/connection-string-parameters/" target="_blank">документации</a>.
-<p style="white-space:pre;font-family:monospace;">NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");</p>
+<p class="code">NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");</p>
 </p>
 
 <p>Команда реализуется классом NpgSqlCommand. Конструктор этого класса принимает в себя строку с SQL запросом и экземпляр подключения.</p>
 
 <p>Первым делом инициализируем команду на получение списка товаров.
-<p style="white-space:pre;font-family:monospace;">NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);</p></p>
+<p class="code">NpgsqlCommand cmd = new NpgsqlCommand(GET_LIST_CMD, connection);</p></p>
 
 <p>Команду можно выполнить тремя способами:
 <ul>
@@ -273,7 +279,7 @@ WHERE productid = :id;";
 </p>
 
 <p>Для получения списка товаров нужно использовать метод ExecuteReader. Полученный объект <i>reader</i> указывает на одну запись из данных в результате. Атрибуты записи находятся в том порядке, в котором они были указаны в запросе. К ним можно обратиться по индексу. Счет индексов начинается с нуля.
-<p style="white-space:pre;font-family:monospace;">        //Получить список товаров
+<p class="code">        //Получить список товаров
         public List&lt;Product&gt; getList()
         {
             List&lt;Product&gt; result = new List&lt;Product&gt;();
@@ -328,7 +334,7 @@ WHERE productid = :id;";
 
 <p>Теперь реализуем вставку данных в таблицу. Этот запрос содержит в себе изменяемые части - параметры. Каждый параметр содержит в себе токен, значение для замены и тип поля в базе данных.</p>
 <p>Идентификатор товара это GUID. При создании нового GUID, вероятность создания дубликата пренебрежимо мала. Поэтому его можно создавать в программе и рассчитывать на то, что конфликта первичного ключа при работе нескольких пользователей не возникнет.
-<p style="white-space:pre;font-family:monospace;">        public bool insert(Product p)
+<p class="code">        public bool insert(Product p)
         {
             <rem>return true;</rem>
             <add>NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
@@ -349,7 +355,7 @@ WHERE productid = :id;";
 		
 <p>Методы обновления и удаления данных в таблице делаются по аналогии.</p>
 <p>В итоге исходный код класса должен быть таким.
-<p style="white-space:pre;font-family:monospace;">using BabylonARM.dto;
+<p class="code">using BabylonARM.dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
