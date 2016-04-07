@@ -242,6 +242,8 @@ INSERT INTO HireTypes (HireTypeId, Description)
 VALUES ('TEMP', 'Временно');
 INSERT INTO HireTypes (HireTypeId, Description)
 VALUES ('AGREEMENT', 'Трудовое соглашение');
+INSERT INTO HireTypes (HireTypeId, Description)
+VALUES ('DISMISSED', 'Уволен');
 
 INSERT INTO ProductGroups (ProductGroupId, Name)
 VALUES ('ac2a862a9f8440d597b8c4188b07c4ed', 'Чай');

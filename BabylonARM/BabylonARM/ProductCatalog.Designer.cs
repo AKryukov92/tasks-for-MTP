@@ -41,6 +41,7 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.gboxProductCard = new System.Windows.Forms.GroupBox();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.lblProductGroup = new System.Windows.Forms.Label();
             this.cmbProductGroup = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -74,14 +75,14 @@
             "abcde"});
             this.txtName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.txtName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.txtName.Location = new System.Drawing.Point(131, 19);
+            this.txtName.Location = new System.Drawing.Point(146, 19);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(100, 20);
             this.txtName.TabIndex = 1;
             // 
             // txtCost
             // 
-            this.txtCost.Location = new System.Drawing.Point(131, 72);
+            this.txtCost.Location = new System.Drawing.Point(146, 72);
             this.txtCost.Name = "txtCost";
             this.txtCost.Size = new System.Drawing.Size(100, 20);
             this.txtCost.TabIndex = 3;
@@ -100,14 +101,14 @@
             "CRATE",
             "TIN_POT",
             "GLASS_POT"});
-            this.cmbUnit.Location = new System.Drawing.Point(131, 45);
+            this.cmbUnit.Location = new System.Drawing.Point(146, 45);
             this.cmbUnit.Name = "cmbUnit";
             this.cmbUnit.Size = new System.Drawing.Size(100, 21);
             this.cmbUnit.TabIndex = 2;
             // 
             // txtQuantity
             // 
-            this.txtQuantity.Location = new System.Drawing.Point(131, 98);
+            this.txtQuantity.Location = new System.Drawing.Point(146, 98);
             this.txtQuantity.Name = "txtQuantity";
             this.txtQuantity.Size = new System.Drawing.Size(100, 20);
             this.txtQuantity.TabIndex = 4;
@@ -141,7 +142,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(156, 151);
+            this.btnDelete.Location = new System.Drawing.Point(171, 152);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 6;
@@ -161,8 +162,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(75, 151);
+            this.btnSave.Location = new System.Drawing.Point(90, 152);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 5;
@@ -172,6 +172,7 @@
             // 
             // gboxProductCard
             // 
+            this.gboxProductCard.Controls.Add(this.btnCancel);
             this.gboxProductCard.Controls.Add(this.lblProductGroup);
             this.gboxProductCard.Controls.Add(this.cmbProductGroup);
             this.gboxProductCard.Controls.Add(this.lblName);
@@ -186,10 +187,21 @@
             this.gboxProductCard.Controls.Add(this.lblCost);
             this.gboxProductCard.Location = new System.Drawing.Point(174, 12);
             this.gboxProductCard.Name = "gboxProductCard";
-            this.gboxProductCard.Size = new System.Drawing.Size(237, 181);
+            this.gboxProductCard.Size = new System.Drawing.Size(257, 181);
             this.gboxProductCard.TabIndex = 1;
             this.gboxProductCard.TabStop = false;
             this.gboxProductCard.Text = "Карточка товара";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Enabled = false;
+            this.btnCancel.Location = new System.Drawing.Point(9, 152);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Text = "Отмена";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // lblProductGroup
             // 
@@ -203,7 +215,7 @@
             // cmbProductGroup
             // 
             this.cmbProductGroup.FormattingEnabled = true;
-            this.cmbProductGroup.Location = new System.Drawing.Point(131, 124);
+            this.cmbProductGroup.Location = new System.Drawing.Point(146, 124);
             this.cmbProductGroup.Name = "cmbProductGroup";
             this.cmbProductGroup.Size = new System.Drawing.Size(100, 21);
             this.cmbProductGroup.TabIndex = 10;
@@ -223,14 +235,14 @@
             this.txtFilter.Location = new System.Drawing.Point(12, 12);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(156, 20);
-            this.txtFilter.TabIndex = 9;
+            this.txtFilter.TabIndex = 0;
             this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
             // 
             // ProductCatalog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 197);
+            this.ClientSize = new System.Drawing.Size(435, 197);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.gboxProductCard);
@@ -266,6 +278,7 @@
         private System.Windows.Forms.Label lblProductGroup;
         private System.Windows.Forms.ComboBox cmbProductGroup;
         private System.Windows.Forms.TextBox txtFilter;
+        private System.Windows.Forms.Button btnCancel;
     }
 }
 
