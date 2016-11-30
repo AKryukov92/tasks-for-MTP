@@ -49,6 +49,11 @@ WHERE productid = :id;";
 
         private static String DELETE_CMD =
     @"DELETE FROM products WHERE productid = :id";
+
+        private static String GET_ORDERS_COUNT_CMD =
+@"SELECT count(*)
+FROM orders
+WHERE productid = :pid";
         
         public List<Product> getList()
         {
@@ -116,7 +121,7 @@ WHERE productid = :id;";
             }
             return null;
         }
-
+        
         public bool insert(Product p)
         {
             NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
@@ -139,9 +144,22 @@ WHERE productid = :id;";
         {
             NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=business;Password=business;Database=business");
             connection.Open();
+            NpgsqlTransaction transaction = connection.BeginTransaction();//Создаем новую транзакцию
+            //Готовим команду для получения количества заказов
+            NpgsqlCommand getOrdersCmd = new NpgsqlCommand(GET_ORDERS_COUNT_CMD, connection);
+            getOrdersCmd.Parameters.Add(new NpgsqlParameter(":pid", NpgsqlDbType.Uuid) { Value = id });
+            //Запрос возвращает одну строчку и одну колонку, поэтому подходит такой вариант вызова
+            int count = (int)getOrdersCmd.ExecuteScalar();
+            if (count > 0)//Если заказы есть
+            {
+                transaction.Rollback();//Откатываем транзакцию
+                connection.Close();//Закрываем подключение
+                return false;//Сообщаем результат
+            }
             NpgsqlCommand cmd = new NpgsqlCommand(DELETE_CMD, connection);
             cmd.Parameters.Add(new NpgsqlParameter(":id", NpgsqlDbType.Uuid) { Value = id });
             bool result = cmd.ExecuteNonQuery() == 1;
+            transaction.Commit();
             connection.Close();
             return result;
         }

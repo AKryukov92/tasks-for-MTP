@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Npgsql;
 
 namespace BabylonARM.presenter
 {
@@ -125,6 +126,10 @@ namespace BabylonARM.presenter
                     view.clearFields();
                     displayFilteredProducts();
                 }
+                else
+                {
+                    view.NotifyUser("Не удалось обновить данные по товару");
+                }
             }
         }
 
@@ -136,13 +141,17 @@ namespace BabylonARM.presenter
                 view.NotifyUser("Выберите продукт для удаления.");
                 return;
             }
-                
+            
             if (productDao.delete(product.Id))
             {
                 cached.Remove(product);
                 view.clearFields();
                 displayFilteredProducts();
                 view.NotifyUser("Удаление успешно");
+            }
+            else
+            {
+                view.NotifyUser("Не удалось удалить товар");
             }
         }
     }
