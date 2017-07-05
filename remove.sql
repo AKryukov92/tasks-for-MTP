@@ -1,0 +1,2 @@
+DROP OWNED BY business;
+DROP USER IF EXISTS business;

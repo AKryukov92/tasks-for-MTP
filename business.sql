@@ -1,6 +1,4 @@
-﻿DROP OWNED BY business;
-DROP USER IF EXISTS business;
-CREATE USER business PASSWORD 'business' CONNECTION LIMIT 1;
+﻿CREATE USER business PASSWORD 'business' CONNECTION LIMIT 1;
 
 DROP TABLE IF EXISTS ProductGroups CASCADE;
 DROP TABLE IF EXISTS Children CASCADE;
@@ -363,20 +361,20 @@ VALUES ('ac17323ecd014510951cddd15449929b', '61e6455900e642b1a5df11853713df92', 
 INSERT INTO Children (ChildId, EmployeeId, LastName, FirstName, FatherName, Gender, BirthDate)
 VALUES ('38ba48babee4435db9d0159d028a69c7', '35ae930259244b70ac85940e453852df', 'Прохоренко', 'Сергей', 'Михайлович', 'М', '22.10.1970');
 
-INSERT INTO Clients (ClientId, Name)
-VALUES ('f20464cb2c6b4f8db1dd3cef77ea2e35','ООО "Рога и копыта"');
-INSERT INTO Clients (ClientId, Name)
-VALUES ('0b027250e1e14a5c887ec462f1a2d875','магазин "Колос"');
-INSERT INTO Clients (ClientId, Name)
-VALUES ('10eb0fdc33784f35b7855332c6f54ddb','кафе "Три толстяка"');
-INSERT INTO Clients (ClientId, Name)
-VALUES ('2963c311fa64492dac12a7916f01e963','ЧП А. А. Соснов');
-INSERT INTO Clients (ClientId, Name)
-VALUES ('26007c7423c346b4be6294855275056b','магазин "Оазис"');
-INSERT INTO Clients (ClientId, Name)
-VALUES ('900ee4da4b2c4b54a3b66ab01c1ccdee','ЗАО "Дебют"');
-INSERT INTO Clients (ClientId, Name)
-VALUES ('4c288a239fb14f27a03925be33c9a410','ООО "Фролов и К."');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('f20464cb2c6b4f8db1dd3cef77ea2e35','ООО "Рога и копыта"','407002545448948','3245001416');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('0b027250e1e14a5c887ec462f1a2d875','магазин "Колос"','407002545448949','5612072836');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('10eb0fdc33784f35b7855332c6f54ddb','кафе "Три толстяка"','407002545448950','6154102109');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('2963c311fa64492dac12a7916f01e963','КФХ А. А. Соснов','407002545448951','4628001814');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('26007c7423c346b4be6294855275056b','магазин "Оазис"','407002545448952','7420009721');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('900ee4da4b2c4b54a3b66ab01c1ccdee','ЗАО "Дебют"','407002545448953','7808029483');
+INSERT INTO Clients (ClientId, Name, CheckingAccount, INN)
+VALUES ('4c288a239fb14f27a03925be33c9a410','ООО "Фролов и К."','407002545448954','7732017742');
 
 INSERT INTO PhoneNumbers (EmployeeId, PhoneNumber, PhoneType)
 VALUES ('04c65c28e4d64dda9439ddfddac7c483', '3812224584', 'HOME');

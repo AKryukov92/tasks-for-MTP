@@ -1,28 +1,28 @@
 <html>
 <head>
-	<meta charset="utf-8"/>
-	<style>
+    <meta charset="utf-8"/>
+    <style>
 .properties {
-	border-collapse:collapse;
+    border-collapse:collapse;
 }
 .properties td, .properties th {
-	border:1px solid black;
+    border:1px solid black;
 }
 p {
 clear:both;
 }
 p add {
-	color:green;
+    color:green;
 }
 p rem {
-	color:red;
-	text-decoration:line-through;
+    color:red;
+    text-decoration:line-through;
 }
 .code {
-	white-space:pre;
-	font-family:monospace;
+    white-space:pre;
+    font-family:monospace;
 }
-	</style>
+    </style>
 </head>
 <body>
 <h2>Объектная модель программы</h2>
@@ -33,10 +33,10 @@ p rem {
 
 <p>Основные операции работы с базой данных это:
 <ul>
-	<li>SELECT - для получения данных из таблицы</li>
-	<li>INSERT - для вставки данных в таблицу</li>
-	<li>UPDATE - для обновления данных в таблице</li>
-	<li>DELETE - для удаления данных из таблицы</li>
+    <li>SELECT - для получения данных из таблицы</li>
+    <li>INSERT - для вставки данных в таблицу</li>
+    <li>UPDATE - для обновления данных в таблице</li>
+    <li>DELETE - для удаления данных из таблицы</li>
 </ul>
 </p>
 
@@ -59,7 +59,7 @@ namespace BabylonARM.dto
         public String GroupId { get; set; }
         public Decimal Cost { get; set; }
         public int Quantity { get; set; }
-        public Decimal Weight { get; set; }
+        public double Weight { get; set; }
     }
 }</p></p>
 
@@ -84,18 +84,18 @@ namespace BabylonARM.dto
         public String GroupId { get; set; }
         public Decimal Cost { get; set; }
         public int Quantity { get; set; }
-        public Decimal Weight { get; set; }
+        public double Weight { get; set; }
     }
 }</p></p>
 
 <p>Классы DTO отвечают только за хранение данных в памяти. За отправку запроса к базе данных и преобразование результата в набор объектов отвечают классы Data Access Object (DAO).</p>
 <p>DAO класс не содержит в себе только служебную информацию, которая нужна ему для работы. Обычно него определяют пять методов:
 <ul>
-	<li>Получить список объектов</li>
-	<li>Получить один объект по его идентификатору</li>
-	<li>Добавить объект в таблицу</li>
-	<li>Обновить объект в таблице</li>
-	<li>Удалить объект в таблице по идентификатору</li>
+    <li>Получить список объектов</li>
+    <li>Получить один объект по его идентификатору</li>
+    <li>Добавить объект в таблицу</li>
+    <li>Обновить объект в таблице</li>
+    <li>Удалить объект в таблице по идентификатору</li>
 </ul>
 В зависимости от потребностей, список методов может сокращаться или расширяться. Если данные об объекте нельзя удалять - не будет метода удаления. Если нужно получать не весь список, а отфильтрованный - метод получения списка будет принимать дополнительные аргументы.</p>
 <p>Создайте в проекте папку "DAO" и в ней создайте новый класс <i>ProductsDao</i>.
@@ -153,30 +153,38 @@ namespace BabylonARM.dao
         {
             <rem>throw new NotImplementedException();</rem>
             <add>List&lt;Product&gt; result = new List&lt;Product&gt;();
-            //Используется конструктор с одновременной инициализацией поля Value
-            result.Add(new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f")) {
-                Name = "Принцесса Нури",
-                GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
-                Unit = "PACK",
-                Weight = 0.1f,
-                Cost = 12m,
-                Quantity = 100
-            });
-            result.Add(new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+            //Создание экземпляра Product (товара)
+            Product current = new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f"));
+            //Заполнение его свойств
+            current.Name = "Принцесса Нури";
+            current.GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed");
+            current.Unit = "PACK";
+            current.Weight = 0.1;
+            current.Cost = 12m;
+            current.Quantity = 100;
+            //Добавление товара в коллекцию
+            result.Add(current);
+            
+            //Создание экземпляра товара с одновременным заполнением свойств
+            current = new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
             {
                 Name = "Нескафе Классик",
                 GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
                 Unit = "TIN_POT",
-                Weight = 0.05f,
+                Weight = 0.05,
                 Cost = 52m,
                 Quantity = 25
-            });
+            }
+            //Добавление товара в коллекцию
+            result.Add(current);
+            
+            //Добавление товара в коллекцию с одновременным заполнением свойств
             result.Add(new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
             {
                 Name = "кекс Абрикосовый",
                 GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
                 Unit = "UNIT",
-                Weight = 0.2f,
+                Weight = 0.2,
                 Cost = 24m,
                 Quantity = 12
             });
@@ -193,7 +201,7 @@ namespace BabylonARM.dao
                     Name = "Принцесса Нури",
                     GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
                     Unit = "PACK",
-                    Weight = 0.1f,
+                    Weight = 0.1,
                     Cost = 12m,
                     Quantity = 100
                 };
@@ -205,7 +213,7 @@ namespace BabylonARM.dao
                     Name = "Нескафе Классик",
                     GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
                     Unit = "TIN_POT",
-                    Weight = 0.05f,
+                    Weight = 0.05,
                     Cost = 52m,
                     Quantity = 25
                 };
@@ -217,7 +225,7 @@ namespace BabylonARM.dao
                     Name = "кекс Абрикосовый",
                     GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
                     Unit = "UNIT",
-                    Weight = 0.2f,
+                    Weight = 0.2,
                     Cost = 24m,
                     Quantity = 12
                 };
@@ -354,8 +362,8 @@ namespace BabylonARM.dto
         public String GroupId { get; set; }
         public Decimal Cost { get; set; }
         public int Quantity { get; set; }
-        public Decimal Weight { get; set; }
-		
+        public double Weight { get; set; }
+        
         <add>public override string ToString()
         {
             return Name;
@@ -366,183 +374,195 @@ namespace BabylonARM.dto
 <p>Проверьте сценарии:</p>
 <p>Сценарий 1
 <ul>
-	<li>Запустить программу</li>
-	<li>Открыть справочник товаров.</li>
-	<li>Список товаров должен заполниться.</li>
-	<li>Выбрать поочередно все товары в списке.</li>
-	<li>Отображаемые значения свойств товара должны меняться.</li>
+    <li>Запустить программу</li>
+    <li>Открыть справочник товаров.</li>
+    <li>Список товаров должен заполниться.</li>
+    <li>Выбрать поочередно все товары в списке.</li>
+    <li>Отображаемые значения свойств товара должны меняться.</li>
 </ul>
 Сценарий 2
 <ul>
-	<li>Запустить программу</li>
-	<li>Открыть справочник товаров.</li>
-	<li>Список товаров должен заполниться.</li>
-	<li>Выбрать в списке <i>Принцесса Нури</i>.</li>
-	<li>Нажать кнопку <i>Удалить</i>.</li>
-	<li>Должно появиться сообщение <i>Удаление 'Принцесса Нури' успешно</i>.</li>
+    <li>Запустить программу</li>
+    <li>Открыть справочник товаров.</li>
+    <li>Список товаров должен заполниться.</li>
+    <li>Выбрать в списке <i>Принцесса Гита</i>.</li>
+    <li>Нажать кнопку <i>Удалить</i>.</li>
+    <li>Должно появиться сообщение <i>Удаление 'Принцесса Гита' успешно</i>.</li>
 </ul>
 Сценарий 3
 <ul>
-	<li>Запустить программу</li>
-	<li>Открыть справочник товаров.</li>
-	<li>Список товаров должен заполниться.</li>
-	<li>Выбрать в списке <i>кекс Абрикосовый</i></li>
-	<li>Изменить значение в поле <i>Наименование</i> на <i>капкейк "Aбрикос"</i>.</li>
-	<li>Нажать кнопку <i>Сохранить</i></li>
-	<li>Должно появиться сообщение <i>Сохранение 'капкейк "Aбрикос"' успешно</i>.</li>
+    <li>Запустить программу</li>
+    <li>Открыть справочник товаров.</li>
+    <li>Список товаров должен заполниться.</li>
+    <li>Выбрать в списке <i>кекс Абрикосовый</i></li>
+    <li>Изменить значение в поле <i>Наименование</i> на <i>выпечка "Aбрикос"</i>.</li>
+    <li>Нажать кнопку <i>Сохранить</i></li>
+    <li>Должно появиться сообщение <i>Сохранение 'выпечка "Aбрикос"' успешно</i>.</li>
 </ul>
 </p>
 
 <h3>Задания для самостоятельного выполнения</h3>
 <p>Создайте DTO и DAO классы для справочников групп товаров.</p>
 <table class="properties">
-	<tr>
-		<th colspan="2">Информация о группах товаров</th>
-	</tr>
-	<tr>
-		<th>Id</th>
-		<th>Name</th>
-	</tr>
-	<tr>
-		<th>Идентификатор</th>
-		<th>Наименование</th>
-	</tr>
-	<tr>
-		<td>ac2a862a9f8440d597b8c4188b07c4ed</td>
-		<td>Чай</td>
-	</tr>
-	<tr>
-		<td>9fca6f4e5e3547d6b59b2325c2fa3fe7</td>
-		<td>Кофе</td>
-	</tr>
-	<tr>
-		<td>043dd2bbe1524149bf13eb5ae9dde160</td>
-		<td>Кондитерские изделия</td>
-	</tr>
+    <tr>
+        <th colspan="2">Информация о группах товаров</th>
+    </tr>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+    </tr>
+    <tr>
+        <th>Идентификатор</th>
+        <th>Наименование</th>
+    </tr>
+    <tr>
+        <td>ac2a862a9f8440d597b8c4188b07c4ed</td>
+        <td>Чай</td>
+    </tr>
+    <tr>
+        <td>9fca6f4e5e3547d6b59b2325c2fa3fe7</td>
+        <td>Кофе</td>
+    </tr>
+    <tr>
+        <td>043dd2bbe1524149bf13eb5ae9dde160</td>
+        <td>Кондитерские изделия</td>
+    </tr>
 </table>
 <p>Создайте DTO и DAO классы для справочников сотрудников.</p>
 <table class="properties">
-	<tr>
-		<th colspan="11">Информация о сотрудниках</th>
-	</tr>
-	<tr>
-		<th>Id</th>
-		<th>Last name</th>
-		<th>First name</th>
-		<th>Father name</th>
-		<th>Gender</th>
-		<th>Birth date</th>
-		<th>Marriage</th>
-		<th>Postal index</th>
-		<th>Address</th>
-		<th>Position</th>
-		<th>Hire type</th>
-	</tr>
-	<tr>
-		<th>Идентификатор</th>
-		<th>Фамилия</th>
-		<th>Имя</th>
-		<th>Отчество</th>
-		<th>Пол</th>
+    <tr>
+        <th colspan="11">Информация о сотрудниках</th>
+    </tr>
+    <tr>
+        <th>Id</th>
+        <th>Last name</th>
+        <th>First name</th>
+        <th>Father name</th>
+        <th>Gender</th>
+        <th>Birth date</th>
+        <th>Marriage</th>
+        <th>Postal index</th>
+        <th>Address</th>
+        <th>Position</th>
+        <th>Hire type</th>
+    </tr>
+    <tr>
+        <th>Идентификатор</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Пол</th>
 
-		<th>Дата рождения</th>
-		<th>Состоит ли в браке</th>
-		<th>Почтовый индекс</th>
-		<th>Адрес</th>
-		<th>Должность</th>
-		
-		<th>Тип найма</th>
-	</tr>
-	<tr>
-		<td>04c65c28e4d64dda9439ddfddac7c483</td>
-		<td>Иванов</td>
-		<td>Иван</td>
-		<td>Иванович</td>
-		<td>М</td>
-		
-		<td>25.12.1959</td>
-		<td>TRUE</td>
-		<td>644050</td>
-		<td>проезд Ильича, 12-3</td>
-		<td>CHIEF</td>
-		
-		<td>CONST</td>
-	</tr>
-	<tr>
-		<td>95a4485b7c7143fba582843a704a376e</td>
-		<td>Кузнецова</td>
-		<td>Тамара</td>
-		<td>Ивановна</td>
-		<td>Ж</td>
-		
-		<td>30.08.1969</td>
-		<td>TRUE</td>
-		<td>644042</td>
-		<td>Спортивный Проезд, 2-21</td>
-		<td>CHIEF_ACCOUNTANT</td>
-		
-		<td>CONST</td>
-	</tr>
-	<tr>
-		<td>ebb729718f614ca39d5c3ed7c9400328</td>
-		<td>Петрова</td>
-		<td>Светлана</td>
-		<td>Сергеевна</td>
-		<td>Ж</td>
-		
-		<td>14.02.1975</td>
-		<td>FALSE</td>
-		<td>644065</td>
-		<td>ул. Володарская, 22-123</td>
-		<td>ACCOUNTANT</td>
-		
-		<td>CONST</td>
-	</tr>
-	<tr>
-		<td>a6e61e149d9149bb846ade9d23353fa5</td>
-		<td>Воронин</td>
-		<td>Сергей</td>
-		<td>Александрович</td>
-		<td>М</td>
-		
-		<td>12.12.1969</td>
-		<td>TRUE</td>
-		<td>644027</td>
-		<td>ул. Родионова, 34</td>
-		<td>AGENT</td>
-		
-		<td>TEMP</td>
-	</tr>
+        <th>Дата рождения</th>
+        <th>Состоит ли в браке</th>
+        <th>Почтовый индекс</th>
+        <th>Адрес</th>
+        <th>Должность</th>
+        
+        <th>Тип найма</th>
+    </tr>
+    <tr>
+        <td>04c65c28e4d64dda9439ddfddac7c483</td>
+        <td>Иванов</td>
+        <td>Иван</td>
+        <td>Иванович</td>
+        <td>М</td>
+        
+        <td>25.12.1959</td>
+        <td>TRUE</td>
+        <td>644050</td>
+        <td>проезд Ильича, 12-3</td>
+        <td>CHIEF</td>
+        
+        <td>CONST</td>
+    </tr>
+    <tr>
+        <td>95a4485b7c7143fba582843a704a376e</td>
+        <td>Кузнецова</td>
+        <td>Тамара</td>
+        <td>Ивановна</td>
+        <td>Ж</td>
+        
+        <td>30.08.1969</td>
+        <td>TRUE</td>
+        <td>644042</td>
+        <td>Спортивный Проезд, 2-21</td>
+        <td>CHIEF_ACCOUNTANT</td>
+        
+        <td>CONST</td>
+    </tr>
+    <tr>
+        <td>ebb729718f614ca39d5c3ed7c9400328</td>
+        <td>Петрова</td>
+        <td>Светлана</td>
+        <td>Сергеевна</td>
+        <td>Ж</td>
+        
+        <td>14.02.1975</td>
+        <td>FALSE</td>
+        <td>644065</td>
+        <td>ул. Володарская, 22-123</td>
+        <td>ACCOUNTANT</td>
+        
+        <td>CONST</td>
+    </tr>
+    <tr>
+        <td>a6e61e149d9149bb846ade9d23353fa5</td>
+        <td>Воронин</td>
+        <td>Сергей</td>
+        <td>Александрович</td>
+        <td>М</td>
+        
+        <td>12.12.1969</td>
+        <td>TRUE</td>
+        <td>644027</td>
+        <td>ул. Родионова, 34</td>
+        <td>AGENT</td>
+        
+        <td>TEMP</td>
+    </tr>
 </table>
 <p>Создайте DTO и DAO классы для справочников клиентов.</p>
 <table class="properties">
-	<tr>
-		<th colspan="2">Информация о клиентах</th>
-	</tr>
-	<tr>
-		<th>Id</th>
-		<th>Name</th>
-	</tr>
-	<tr>
-		<th>Идентификатор</th>
-		<th>Наименование</th>
-	</tr>
-	<tr>
-		<td>f20464cb2c6b4f8db1dd3cef77ea2e35</td>
-		<td>ООО "Рога и копыта"</td>
-	</tr>
-	<tr>
-		<td>0b027250e1e14a5c887ec462f1a2d875</td>
-		<td>магазин "Колос"</td>
-	</tr>
-	<tr>
-		<td>10eb0fdc33784f35b7855332c6f54ddb</td>
-		<td>кафе "Три толстяка"</td>
-	</tr>
-	<tr>
-		<td>2963c311fa64492dac12a7916f01e963</td>
-		<td>ЧП А. А. Соснов</td>
-	</tr>
+    <tr>
+        <th colspan="4">Информация о клиентах</th>
+    </tr>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>CheckingAccount</th>
+        <th>INN</th>
+    </tr>
+    <tr>
+        <th>Идентификатор</th>
+        <th>Наименование</th>
+        <th>Расчетный счет</th>
+        <th>ИНН</th>
+    </tr>
+    <tr>
+        <td>f20464cb2c6b4f8db1dd3cef77ea2e35</td>
+        <td>ООО "Рога и копыта"</td>
+        <td>407002545448948</td>
+        <td>3245001416</td>
+    </tr>
+    <tr>
+        <td>0b027250e1e14a5c887ec462f1a2d875</td>
+        <td>магазин "Колос"</td>
+        <td>407002545448949</td>
+        <td>5612072836</td>
+    </tr>
+    <tr>
+        <td>10eb0fdc33784f35b7855332c6f54ddb</td>
+        <td>кафе "Три толстяка"</td>
+        <td>407002545448950</td>
+        <td>6154102109</td>
+    </tr>
+    <tr>
+        <td>2963c311fa64492dac12a7916f01e963</td>
+        <td>КФХ А. А. Соснов</td>
+        <td>407002545448951</td>
+        <td>4628001814</td>
+    </tr>
 </table>
 </body>
 </html>

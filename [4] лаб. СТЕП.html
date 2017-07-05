@@ -1,28 +1,28 @@
 <html>
 <head>
-	<meta charset="utf-8"/>
-	<style>
+    <meta charset="utf-8"/>
+    <style>
 .properties {
-	border-collapse:collapse;
+    border-collapse:collapse;
 }
 .properties td, .properties th {
-	border:1px solid black;
+    border:1px solid black;
 }
 p {
 clear:both;
 }
 p add {
-	color:green;
+    color:green;
 }
 p rem {
-	color:red;
-	text-decoration:line-through;
+    color:red;
+    text-decoration:line-through;
 }
 .code {
-	white-space:pre;
-	font-family:monospace;
+    white-space:pre;
+    font-family:monospace;
 }
-	</style>
+    </style>
 </head>
 <body>
 <h2>Связь с базой данных</h2>
@@ -53,12 +53,12 @@ p rem {
 <p>Утилита создаст папку <i>Npgsql.2.2.7</i> в которой будет содержаться библиотека с драйвером.</p>
 <p>Теперь к проекту нужно добавить ссылку на эту библиотеку. Для этого нужно:
 <ul>
-	<li>Открыть <i>Обозреватель Решений (Solution Explorer)</i></li>
-	<li>Щелкнуть правой кнопкой по узлу <i>Ссылки(References)</i></li>
-	<li>Выбрать пункт меню <i>Добавить->Ссылку (Add->Reference)</i></li>
-	<li>Щелкнуть кнопку <i>Обзор...(Browse...)</i></li>
-	<li>Найти и выбрать файл <i>Npgsql.2.2.7/lib/net40/Npgsql.dll</i></li>
-	<li>Щелкнуть кнопку <i>Добавить(Add)</i></li>
+    <li>Открыть <i>Обозреватель Решений (Solution Explorer)</i></li>
+    <li>Щелкнуть правой кнопкой по узлу <i>Ссылки(References)</i></li>
+    <li>Выбрать пункт меню <i>Добавить->Ссылку (Add->Reference)</i></li>
+    <li>Щелкнуть кнопку <i>Обзор...(Browse...)</i></li>
+    <li>Найти и выбрать файл <i>Npgsql.2.2.7/lib/net40/Npgsql.dll</i></li>
+    <li>Щелкнуть кнопку <i>Добавить(Add)</i></li>
 </ul></p>
 
 <h3>Основная часть</h3>
@@ -163,23 +163,32 @@ WHERE productid = :id;";
         public List&lt;Product&gt; getList()
         {
             List&lt;Product&gt; result = new List&lt;Product&gt;();
-            result.Add(new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f")) {
-                Name = "Принцесса Нури",
-                GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
-                Unit = "PACK",
-                Weight = 0.1f,
-                Cost = 12m,
-                Quantity = 100
-            });
-            result.Add(new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+            //Создание экземпляра Product (товара)
+            Product current = new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f"));
+            //Заполнение его свойств
+            current.Name = "Принцесса Нури";
+            current.GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed");
+            current.Unit = "PACK";
+            current.Weight = 0.1;
+            current.Cost = 12m;
+            current.Quantity = 100;
+            //Добавление товара в коллекцию
+            result.Add(current);
+            
+            //Создание экземпляра товара с одновременным заполнением свойств
+            current = new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
             {
                 Name = "Нескафе Классик",
                 GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
                 Unit = "TIN_POT",
-                Weight = 0.05f,
+                Weight = 0.05,
                 Cost = 52m,
                 Quantity = 25
-            });
+            }
+            //Добавление товара в коллекцию
+            result.Add(current);
+            
+            //Добавление товара в коллекцию с одновременным заполнением свойств
             result.Add(new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
             {
                 Name = "кекс Абрикосовый",
@@ -202,7 +211,7 @@ WHERE productid = :id;";
                     Name = "Принцесса Нури",
                     GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
                     Unit = "PACK",
-                    Weight = 0.1f,
+                    Weight = 0.1,
                     Cost = 12m,
                     Quantity = 100
                 };
@@ -214,7 +223,7 @@ WHERE productid = :id;";
                     Name = "Нескафе Классик",
                     GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
                     Unit = "TIN_POT",
-                    Weight = 0.05f,
+                    Weight = 0.05,
                     Cost = 52m,
                     Quantity = 25
                 };
@@ -226,7 +235,7 @@ WHERE productid = :id;";
                     Name = "кекс Абрикосовый",
                     GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
                     Unit = "UNIT",
-                    Weight = 0.2f,
+                    Weight = 0.2,
                     Cost = 24m,
                     Quantity = 12
                 };
@@ -255,10 +264,10 @@ WHERE productid = :id;";
 
 <p>Общая технология работы с базой данных состоит из шагов:
 <ul>
-	<li>Создать подключение</li>
-	<li>Создать команду</li>
-	<li>Выполнить команду и получить запрос</li>
-	<li>Обработать результат запроса</li>
+    <li>Создать подключение</li>
+    <li>Создать команду</li>
+    <li>Выполнить команду и получить запрос</li>
+    <li>Обработать результат запроса</li>
 </ul></p>
 
 <p>Подключение к базе данных реализуется классом NpgsqlConnection. Конструктор этого класса принимает <i>строку подключения (ConnectionString)</i>. Она содержит в себе адрес сервера, имя пользователя, пароль, наименование базы данных. Полный синтаксис строки подключения можно посмотреть в <a href="http://www.npgsql.org/doc/connection-string-parameters/" target="_blank">документации</a>.
@@ -272,9 +281,9 @@ WHERE productid = :id;";
 
 <p>Команду можно выполнить тремя способами:
 <ul>
-	<li>ExecuteNonQuery - Выполняет запрос и возвращает количество строк, которые были изменены. Подходит для INSERT, DELETE, UPDATE</li>
-	<li>ExecuteReader - Выполняет запрос и возвращает курсор, которым можно обработать результат. Чаще всего используется в запросе SELECT</li>
-	<li>ExecuteScalar - Выполняет запрос и возвращает значение из первой колонку в первой строчке результата запроса. Чаще всего используется в запросе SELECT с агрегирующими функциями.</li>
+    <li>ExecuteNonQuery - Выполняет запрос и возвращает количество строк, которые были изменены. Подходит для INSERT, DELETE, UPDATE</li>
+    <li>ExecuteReader - Выполняет запрос и возвращает курсор, которым можно обработать результат. Чаще всего используется в запросе SELECT</li>
+    <li>ExecuteScalar - Выполняет запрос и возвращает значение из первой колонку в первой строчке результата запроса. Чаще всего используется в запросе SELECT с агрегирующими функциями.</li>
 </ul>
 </p>
 
@@ -283,29 +292,38 @@ WHERE productid = :id;";
         public List&lt;Product&gt; getList()
         {
             List&lt;Product&gt; result = new List&lt;Product&gt;();
-            <rem>result.Add(new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f")) {
-                Name = "Принцесса Нури",
-                GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
-                Unit = "PACK",
-                Weight = 0.1f,
-                Cost = 12m,
-                Quantity = 100
-            });
-            result.Add(new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
+            <rem>//Создание экземпляра Product (товара)
+            Product current = new Product(Guid.Parse("cc873c2777004d4ea4c8569feb6bb93f"));
+            //Заполнение его свойств
+            current.Name = "Принцесса Нури";
+            current.GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed");
+            current.Unit = "PACK";
+            current.Weight = 0.1;
+            current.Cost = 12m;
+            current.Quantity = 100;
+            //Добавление товара в коллекцию
+            result.Add(current);
+            
+            //Создание экземпляра товара с одновременным заполнением свойств
+            current = new Product(Guid.Parse("d28cfd5e10144214ab09c37be1771202"))
             {
                 Name = "Нескафе Классик",
                 GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
                 Unit = "TIN_POT",
-                Weight = 0.05f,
+                Weight = 0.05,
                 Cost = 52m,
                 Quantity = 25
-            });
+            }
+            //Добавление товара в коллекцию
+            result.Add(current);
+            
+            //Добавление товара в коллекцию с одновременным заполнением свойств
             result.Add(new Product(Guid.Parse("b96d685c96c44ab4bcd8c4b212b78895"))
             {
                 Name = "кекс Абрикосовый",
                 GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
                 Unit = "UNIT",
-                Weight = 0.2f,
+                Weight = 0.2,
                 Cost = 24m,
                 Quantity = 12
             });</rem>
@@ -352,7 +370,7 @@ WHERE productid = :id;";
             return result;
             //Если вставилось 0 строк, значит запрос выполнился некорректно</add>
         }</p></p>
-		
+        
 <p>Методы обновления и удаления данных в таблице делаются по аналогии.</p>
 <p>В итоге исходный код класса должен быть таким.
 <p class="code">using BabylonARM.dto;
@@ -442,7 +460,7 @@ WHERE productid = :id;";
                     Name = "Принцесса Нури",
                     GroupId = Guid.Parse("ac2a862a9f8440d597b8c4188b07c4ed"),
                     Unit = "PACK",
-                    Weight = 0.1f,
+                    Weight = 0.1,
                     Cost = 12m,
                     Quantity = 100
                 };
@@ -454,7 +472,7 @@ WHERE productid = :id;";
                     Name = "Нескафе Классик",
                     GroupId = Guid.Parse("9fca6f4e5e3547d6b59b2325c2fa3fe7"),
                     Unit = "TIN_POT",
-                    Weight = 0.05f,
+                    Weight = 0.05,
                     Cost = 52m,
                     Quantity = 25
                 };
@@ -466,7 +484,7 @@ WHERE productid = :id;";
                     Name = "кекс Абрикосовый",
                     GroupId = Guid.Parse("043dd2bbe1524149bf13eb5ae9dde160"),
                     Unit = "UNIT",
-                    Weight = 0.2f,
+                    Weight = 0.2,
                     Cost = 24m,
                     Quantity = 12
                 };
@@ -524,34 +542,34 @@ WHERE productid = :id;";
 <p>Проверьте сценарии:</p>
 <p>Сценарий 1
 <ul>
-	<li>Запустить программу</li>
-	<li>Открыть справочник товаров.</li>
-	<li>Список товаров должен заполниться.</li>
-	<li>Выбрать поочередно все товары в списке.</li>
-	<li>Отображаемые значения свойств товара должны меняться.</li>
+    <li>Запустить программу</li>
+    <li>Открыть справочник товаров.</li>
+    <li>Список товаров должен заполниться.</li>
+    <li>Выбрать поочередно все товары в списке.</li>
+    <li>Отображаемые значения свойств товара должны меняться.</li>
 </ul>
 Сценарий 2
 <ul>
-	<li>Запустить программу</li>
-	<li>Открыть справочник товаров.</li>
-	<li>Список товаров должен заполниться.</li>
-	<li>Выбрать в списке <i>Принцесса Нури</i>.</li>
-	<li>Нажать кнопку <i>Удалить</i>.</li>
-	<li>Должно появиться сообщение <i>Удаление 'Принцесса Нури' успешно</i>.</li>
-	<li>Нажать кнопку <i>Обновить</i></li>
-	<li>Список товаров должен обновиться. Товара <i>Принцесса Нури</i> в списке быть не должно</li>
+    <li>Запустить программу</li>
+    <li>Открыть справочник товаров.</li>
+    <li>Список товаров должен заполниться.</li>
+    <li>Выбрать в списке <i>Принцесса Нури</i>.</li>
+    <li>Нажать кнопку <i>Удалить</i>.</li>
+    <li>Должно появиться сообщение <i>Удаление 'Принцесса Нури' успешно</i>.</li>
+    <li>Нажать кнопку <i>Обновить</i></li>
+    <li>Список товаров должен обновиться. Товара <i>Принцесса Нури</i> в списке быть не должно</li>
 </ul>
 Сценарий 3
 <ul>
-	<li>Запустить программу</li>
-	<li>Открыть справочник товаров.</li>
-	<li>Список товаров должен заполниться.</li>
-	<li>Выбрать в списке <i>кекс Абрикосовый</i>.</li>
-	<li>Изменить значение в поле <i>Наименование</i> на <i>капкейк "Aбрикос"</i>.</li>
-	<li>Нажать кнопку <i>Сохранить</i></li>
-	<li>Должно появиться сообщение <i>Сохранение 'капкейк "Aбрикос"' успешно</i>.</li>
-	<li>Нажать кнопку <i>Обновить</i>.</li>
-	<li>Список товаров должен обновиться. Вместо товара <i>кекс Абрикосовый</i> должен появиться товар <i>капкейк "Абрикос"</i>.</li>
+    <li>Запустить программу</li>
+    <li>Открыть справочник товаров.</li>
+    <li>Список товаров должен заполниться.</li>
+    <li>Выбрать в списке <i>кекс Абрикосовый</i>.</li>
+    <li>Изменить значение в поле <i>Наименование</i> на <i>капкейк "Aбрикос"</i>.</li>
+    <li>Нажать кнопку <i>Сохранить</i></li>
+    <li>Должно появиться сообщение <i>Сохранение 'капкейк "Aбрикос"' успешно</i>.</li>
+    <li>Нажать кнопку <i>Обновить</i>.</li>
+    <li>Список товаров должен обновиться. Вместо товара <i>кекс Абрикосовый</i> должен появиться товар <i>капкейк "Абрикос"</i>.</li>
 </ul>
 </p>
 <h3>Задание для самостоятельного выполнения</h3>
