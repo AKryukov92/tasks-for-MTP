@@ -263,11 +263,11 @@ VALUES ('ACCOUNTANT', 'Бухгалтер', '95a4485b7c7143fba582843a704a376e');
 INSERT INTO Positions (PositionId, Name, ManagerId)
 VALUES ('CASHIER', 'Кассир', '95a4485b7c7143fba582843a704a376e');
 INSERT INTO Positions (PositionId, Name, ManagerId)
-VALUES ('AGENT', 'Агент', 'a6e61e149d9149bb846ade9d23353fa5');
+VALUES ('AGENT', 'Агент', '691c029458c54db0ac2809584f7c8b43');
 INSERT INTO Positions (PositionId, Name, ManagerId)
 VALUES ('COURIER', 'Курьер', 'a6e61e149d9149bb846ade9d23353fa5');
 INSERT INTO Positions (PositionId, Name, ManagerId)
-VALUES ('MANAGER', 'Менеджер', NULL);
+VALUES ('MANAGER', 'Менеджер', '04c65c28e4d64dda9439ddfddac7c483');
 INSERT INTO Positions (PositionId, Name, ManagerId)
 VALUES ('SELLER', 'Продавец', 'a6e61e149d9149bb846ade9d23353fa5');
 
